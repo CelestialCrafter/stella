@@ -21,20 +21,19 @@ def set_selection(obj):
     bpy.context.view_layer.objects.active = obj
 
 
-def apply_size(obj, size):
-    set_selection(obj)
+def apply_size(size):
     bpy.ops.transform.resize(value=(size, size, size))
 
 
-def export(obj, name):
-    set_selection(obj)
+def export(name):
     bpy.ops.export_scene.gltf(filepath=name, use_selection=True)
 
 
 planet = json.loads(args[0])
 sphere = new_base_sphere()
 
-apply_size(sphere, planet["values"]["size"])
-export(sphere, planet["filepath"])
+set_selection(sphere)
+apply_size(planet["values"]["size"])
+export(planet["filepath"])
 
 print(f"{stella_prefix}{planet}")
