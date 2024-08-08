@@ -11,10 +11,11 @@ import (
 )
 
 const (
-	BLENDER_EXE            = "org.blender.Blender"
-	SCRIPT_ERROR_EXIT_CODE = 73
-	SCRIPT_PATH            = "blender/app.py"
-	STELLA_PREFIX          = "[stella]"
+	blenderExe          = "org.blender.Blender"
+	scriptErrorExitCode = 73
+	scriptPath          = "blender/app.py"
+	stellaPrefix        = "[stella]"
+	modelPath           = "models/"
 )
 
 type PlanetValues struct {
@@ -31,10 +32,33 @@ type Planet struct {
 	Features PlanetFeatures `json:"features"`
 	Values   PlanetValues   `json:"values"`
 	Hash     string         `json:"hash"`
+	FilePath string         `json:"filepath"`
 }
 
-func (p Planet) ModelPath() string {
-	return path.Join("planet-models", p.Hash+".obj")
+func NewPlanet(features PlanetFeatures) Planet {
+	cwd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
+	// @FIX ........?
+	hash := "baabbauwb"
+
+	modelPath := path.Join(cwd, modelPath, hash+".glb")
+
+	// @FIX ...?
+	values := PlanetValues{
+		Size:          3.25,
+		Color:         [3]float32{255, 150, 255},
+		BlotchDensity: 3.25,
+	}
+
+	return Planet{
+		Hash:     hash,
+		FilePath: modelPath,
+		Features: features,
+		Values:   values,
+	}
 }
 
 func (p Planet) CreateModel() error {
@@ -43,19 +67,19 @@ func (p Planet) CreateModel() error {
 		return err
 	}
 
-	// @FIX turn the blender script into a daemon so startup isnt required on every model creation
+	// @PERF turn the blender script into a daemon so startup isnt required on every model creation
 	cwd, err := os.Getwd()
 	if err != nil {
 		return err
 	}
 
-	absoluteScriptPath := path.Join(cwd, SCRIPT_PATH)
+	absoluteScriptPath := path.Join(cwd, scriptPath)
 
 	blenderCmd := exec.Command(
-		BLENDER_EXE,
+		blenderExe,
 		"--background",
 		"--python-use-system-env",
-		"--python-exit-code", fmt.Sprint(SCRIPT_ERROR_EXIT_CODE),
+		"--python-exit-code", fmt.Sprint(scriptErrorExitCode),
 		"--python", absoluteScriptPath,
 		"--", string(marshalled),
 	)
@@ -76,11 +100,11 @@ func (p Planet) CreateModel() error {
 
 	output := ""
 	for _, line := range strings.Split(stdout.String(), "\n") {
-		if !strings.HasPrefix(line, STELLA_PREFIX) {
+		if !strings.HasPrefix(line, stellaPrefix) {
 			continue
 		}
 
-		output += fmt.Sprint(strings.TrimPrefix(line, STELLA_PREFIX), "\n")
+		output += fmt.Sprint(strings.TrimPrefix(line, stellaPrefix), "\n")
 	}
 
 	fmt.Println(output)

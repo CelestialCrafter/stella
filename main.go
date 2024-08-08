@@ -6,17 +6,7 @@ import (
 )
 
 func main() {
-	planet := planets.Planet{
-		Features: planets.PlanetFeatures{
-			Blotches: false,
-		},
-		Values: planets.PlanetValues{
-			Size:          3.25,
-			Color:         [3]float32{255, 150, 255},
-			BlotchDensity: 3.25,
-		},
-		Hash: "bab78t3893irwo0",
-	}
+	planet := planets.NewPlanet(planets.PlanetFeatures{})
 
 	err := planet.CreateModel()
 	if err != nil {
