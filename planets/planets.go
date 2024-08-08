@@ -44,8 +44,8 @@ func NewPlanet(features PlanetFeatures) Planet {
 		panic(err)
 	}
 
-	// @FIX ........?
-	hash := "baabbauwb"
+	// @FIX ........? My own baabbauwb version (:
+	hash := "khrbakchhhh"
 
 	// @TODO set this to the hash instead of time.now
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
