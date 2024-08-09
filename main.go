@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/CelestialCrafter/stella/planets"
 	"github.com/CelestialCrafter/stella/server"
+	"github.com/charmbracelet/log"
 )
 
 func main() {
@@ -12,6 +13,7 @@ func main() {
 
 	err := planet.CreateModel()
 	if err != nil {
+		log.Error(err)
 		panic(err)
 	}
 
