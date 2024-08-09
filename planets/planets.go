@@ -1,12 +1,13 @@
 package planets
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"math/rand"
 	"os"
 	"path"
+	"strconv"
 	"time"
-
-	"github.com/CelestialCrafter/stella/utils"
 )
 
 const (
@@ -47,7 +48,21 @@ func NewPlanet(features PlanetFeatures) Planet {
 	}
 
 	// @TODO set this to the hash instead of time.now
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	dateBytes, err := time.Now().MarshalBinary()
+	if err != nil {
+		panic(err)
+	}
+
+	hash := sha256.New()
+	hash.Write(dateBytes)
+
+	hashStr := hex.EncodeToString(hash.Sum(nil))
+	hashInt, err := strconv.Atoi(hashStr)
+	if err != nil {
+		panic(err)
+	}
+
+	r := rand.New(rand.NewSource(int64(hashInt)))
 
 	values := PlanetValues{
 		// 10.0 to 20.0
@@ -62,10 +77,8 @@ func NewPlanet(features PlanetFeatures) Planet {
 		StarNeutronColor: [3]float32{r.Float32() * 85, r.Float32() * 85, (r.Float32() * 140) + 115},
 	}
 
-	hash := utils.GenerateInterfaceSHA256(values)
-
 	return Planet{
-		Hash:      hash,
+		Hash:      hashStr,
 		Directory: path.Join(cwd, modelPath),
 		Features:  features,
 		Values:    values,

@@ -8,7 +8,8 @@ import (
 
 func main() {
 	planet := planets.NewPlanet(planets.PlanetFeatures{
-		Type: planets.StarPlanet,
+		Type:        planets.StarPlanet,
+		StarNeutron: true,
 	})
 
 	err := planet.CreateModel()
