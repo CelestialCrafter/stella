@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/CelestialCrafter/stella/planets"
-	// "github.com/CelestialCrafter/stella/server"
+	"github.com/CelestialCrafter/stella/server"
 )
 
 func main() {
@@ -15,5 +15,5 @@ func main() {
 		panic(err)
 	}
 
-	// server.SetupServer()
+	server.SetupServer()
 }

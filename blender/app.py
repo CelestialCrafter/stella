@@ -3,20 +3,16 @@ import os
 import sys
 
 import bpy
-from bpy.app.handlers import load_post, persistent
 
 stella_prefix = "[stella]"
 
 args = sys.argv[sys.argv.index("--") + 1:]
-if len(args) < 1:
-    raise Exception("no planet argument")
+if len(args) < 2:
+    raise Exception("no base file or planet supplied")
 
 
-def new_base_sphere():
-    bpy.ops.mesh.primitive_uv_sphere_add(radius=1,
-                                         enter_editmode=False,
-                                         location=(0, 0, 0))
-    return bpy.context.active_object
+def normalize_color(color):
+    return (color[0] / 255, color[1] / 255, color[2] / 255, 1)
 
 
 def set_selection(obj):
@@ -24,18 +20,11 @@ def set_selection(obj):
 
 
 def get_selection():
-    return bpy.context.active_object
+    return bpy.context.view_layer.objects.active
 
 
 def apply_size(size):
     bpy.ops.transform.resize(value=(size, size, size))
-
-
-def apply_subdiv(level):
-    obj = get_selection()
-    modifier = obj.modifiers.new("Subdivision Surface", "SUBSURF")
-    modifier.levels = level
-    modifier.render_levels = level
 
 
 def apply_color(color):
@@ -43,16 +32,23 @@ def apply_color(color):
     nodes = material.node_tree.nodes
 
     bsdf = nodes['Principled BSDF']
-    bsdf.inputs['Base Color'].default_value = (color[0] / 255, color[1] / 255,
-                                               color[2] / 255, 1)
+    bsdf.inputs['Base Color'].default_value = normalize_color(color)
 
 
-def apply_brightness(strength):
+def apply_emission_strength(strength):
     material = get_selection().active_material
     nodes = material.node_tree.nodes
 
     bsdf = nodes['Principled BSDF']
     bsdf.inputs['Emission Strength'].default_value = strength
+
+
+def apply_emission_color(color):
+    material = get_selection().active_material
+    nodes = material.node_tree.nodes
+
+    bsdf = nodes['Principled BSDF']
+    bsdf.inputs['Emission Color'].default_value = normalize_color(color)
 
 
 def export(name):
@@ -68,9 +64,10 @@ def generate_planet(planet):
             apply_color(values["normal_color"])
         case "star":
             apply_size(values["star_size"])
-            apply_brightness(values["star_brightness"])
+            apply_emission_strength(values["star_brightness"])
+            if features["star_neutron"]:
+                apply_emission_color(values["star_neutron_color"])
     export(os.path.join(planet["directory"], planet["hash"] + ".glb"))
-    print(f"{stella_prefix}{planet}")
 
 
 bpy.ops.wm.open_mainfile(filepath=args[0])
