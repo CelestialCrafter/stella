@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/CelestialCrafter/stella/db"
 	"github.com/CelestialCrafter/stella/planets"
 	"github.com/CelestialCrafter/stella/server"
 	"github.com/charmbracelet/log"
@@ -17,5 +18,6 @@ func main() {
 		log.Fatal("could not create model", "error", err)
 	}
 
+	db.InitDB()
 	server.SetupServer()
 }
