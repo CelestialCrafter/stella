@@ -65,5 +65,7 @@ func SetupServer() {
 	svelte(e.Group("/app"))
 	e.Static("/models", "models")
 
+	e.GET("/api/planet/:hash", GetPlanet)
+
 	e.Logger.Fatal(e.Start(bindAddress))
 }
