@@ -6,6 +6,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func CheckRoute(c echo.Context) error {
+func Models(c echo.Context) error {
 	return c.String(http.StatusOK, "Up and working!")
 }
