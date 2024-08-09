@@ -5,6 +5,8 @@ import (
 	"os"
 	"path"
 	"time"
+
+	"github.com/CelestialCrafter/stella/utils"
 )
 
 const (
@@ -44,9 +46,6 @@ func NewPlanet(features PlanetFeatures) Planet {
 		panic(err)
 	}
 
-	// @FIX ........? My own baabbauwb version (:
-	hash := "khrbakchhhh"
-
 	// @TODO set this to the hash instead of time.now
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 
@@ -62,6 +61,8 @@ func NewPlanet(features PlanetFeatures) Planet {
 		// [0.0 to 85.0] * 2 + [115.0 to 255]
 		StarNeutronColor: [3]float32{r.Float32() * 85, r.Float32() * 85, (r.Float32() * 140) + 115},
 	}
+
+	hash := utils.GenerateInterfaceSHA256(values)
 
 	return Planet{
 		Hash:      hash,
