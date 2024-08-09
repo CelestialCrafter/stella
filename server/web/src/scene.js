@@ -32,22 +32,29 @@ export const initScene = canvas => {
 
   controls = new OrbitControls(camera, renderer.domElement);
 
-  camera.position.set(0, 0, 100);
-
+  camera.position.set(50, 0, 50);
+  controls.target = new THREE.Vector3(0, 0, 0);
   controls.update();
+
   resize();
   animate();
 };
 
-export const addPlanets = planets => {
-  let i = 0;
-  planets.forEach(url => loader.load(url, gltf => {
-    const planet = gltf.scene;
+const load = url => new Promise((res, rej) => loader.load(url, res, () => {}, rej));
+export const addPlanets = async urls => {
+  const planets = (await Promise.all(urls.map(load))).map(gltf => gltf.scene);
+
+  let totalBounding = new THREE.Box3();
+  for (const [i, planet] of planets.entries()) {
     scene.add(planet);
-    planet.position.x = i * 50;
-    console.log(planet);
-    i++;
-  }));
+    const spaceVector = new THREE.Vector3(50, 0, 0)
+    planet.position.add(spaceVector.multiplyScalar(i));
+    totalBounding.expandByPoint(spaceVector);
+  }
+
+  let center = new THREE.Vector3(0, 0, 0);
+  totalBounding.getCenter(center);
+  controls.target = center;
 };
 
 window.addEventListener('resize', resize);
