@@ -71,7 +71,7 @@ func NewPlanet(features PlanetFeatures) Planet {
 		NormalColor:      [3]float32{frange(0, 255), frange(0, 255), frange(0, 255)},
 		StarSize:         frange(20, 30),
 		StarBrightness:   frange(0, 5),
-		StarNeutronColor: [3]float32{frange(0, 85), frange(0, 85), frange(115, 255)},
+		StarNeutronColor: [3]float32{frange(0, 255), frange(130, 255), 255},
 	}
 
 	return Planet{
