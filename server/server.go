@@ -67,6 +67,8 @@ func SetupServer() {
 
 	e.GET("/api/planet/:hash", GetPlanet)
 	e.GET("/api/planet/new", NewPlanet)
+	e.GET("/api/auth/login", Login)
+	e.GET("/api/auth/callback", Callback)
 
 	e.Logger.Fatal(e.Start(bindAddress))
 }

@@ -1,16 +1,14 @@
 package planets
 
 import (
-	"crypto/sha256"
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
 	"math/rand"
 	"os"
 	"path"
-	"time"
 
-	"github.com/CelestialCrafter/stella/utils"
+	"github.com/CelestialCrafter/stella/common"
 )
 
 const (
@@ -41,14 +39,6 @@ type Planet struct {
 	Directory string         `json:"directory"`
 }
 
-func hash() []byte {
-	b := make([]byte, 4)
-	timestamp := time.Now().UnixNano()
-	binary.BigEndian.PutUint32(b, uint32(timestamp))
-	hash := sha256.Sum256(b)
-	return hash[:]
-}
-
 func frangeWrapper(r *rand.Rand) func(min float32, max float32) float32 {
 	return func(min, max float32) float32 {
 		return (r.Float32() * (max - min)) + min
@@ -61,7 +51,7 @@ func NewPlanet(features PlanetFeatures) Planet {
 		panic(err)
 	}
 
-	newHash := hash()
+	newHash := common.Hash()
 	newHashInt := int64(binary.BigEndian.Uint32(newHash))
 	r := rand.New(rand.NewSource(newHashInt))
 	frange := frangeWrapper(r)
