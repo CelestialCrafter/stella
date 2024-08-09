@@ -13,10 +13,7 @@ const (
 	svelteDevAddress = "http://localhost:5173"
 )
 
-func SetupServer() {
-	e := echo.New()
-	e.Static("/models", "models")
-
+func svelte(e *echo.Echo) {
 	svelteDevUrl, err := url.Parse(svelteDevAddress)
 	if err != nil {
 		panic(err)
@@ -30,5 +27,14 @@ func SetupServer() {
 	} else {
 		e.Static("/", "server/web/dist")
 	}
+}
+
+func SetupServer() {
+	e := echo.New()
+	e.HideBanner = true
+
+	e.Static("/models", "models")
+	svelte(e)
+
 	e.Logger.Fatal(e.Start(bindAddress))
 }
