@@ -1,7 +1,9 @@
 import json
+import os
 import sys
 
 import bpy
+from bpy.app.handlers import load_post, persistent
 
 stella_prefix = "[stella]"
 
@@ -37,45 +39,39 @@ def apply_subdiv(level):
 
 
 def apply_color(color):
-    material = bpy.data.materials.new(name="Planet Color")
-    material.use_nodes = True
-
+    material = get_selection().active_material
     nodes = material.node_tree.nodes
-    links = material.node_tree.links
 
-    # clear defaults
-    nodes.clear()
+    bsdf = nodes['Principled BSDF']
+    bsdf.inputs['Base Color'].default_value = (color[0] / 255, color[1] / 255,
+                                               color[2] / 255, 1)
 
-    # create nodes
-    node_rgb = nodes.new(type='ShaderNodeRGB')
-    node_rgb.outputs[0].default_value = (color[0] / 255, color[1] / 255,
-                                         color[2] / 255, 1)
 
-    node_principled_bsdf = nodes.new(type='ShaderNodeBsdfPrincipled')
-    node_output = nodes.new(type='ShaderNodeOutputMaterial')
+def apply_brightness(strength):
+    material = get_selection().active_material
+    nodes = material.node_tree.nodes
 
-    # link
-    links.new(node_rgb.outputs['Color'],
-              node_principled_bsdf.inputs['Base Color'])
-    links.new(node_principled_bsdf.outputs['BSDF'],
-              node_output.inputs['Surface'])
-
-    # assign
-    get_selection().data.materials.append(material)
+    bsdf = nodes['Principled BSDF']
+    bsdf.inputs['Emission Strength'].default_value = strength
 
 
 def export(name):
     bpy.ops.export_scene.gltf(filepath=name, use_selection=True)
 
 
-planet = json.loads(args[0])
+def generate_planet(planet):
+    values = planet["values"]
+    features = planet["features"]
+    match features["type"]:
+        case "normal":
+            apply_size(values["normal_size"])
+            apply_color(values["normal_color"])
+        case "star":
+            apply_size(values["star_size"])
+            apply_brightness(values["star_brightness"])
+    export(os.path.join(planet["directory"], planet["hash"] + ".glb"))
+    print(f"{stella_prefix}{planet}")
 
-sphere = new_base_sphere()
-set_selection(sphere)
 
-apply_subdiv(4)
-apply_size(planet["values"]["size"])
-apply_color(planet["values"]["color"])
-export(planet["filepath"])
-
-print(f"{stella_prefix}{planet}")
+bpy.ops.wm.open_mainfile(filepath=args[0])
+generate_planet(json.loads(args[1]))

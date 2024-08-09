@@ -14,6 +14,7 @@ const (
 	blenderExe          = "org.blender.Blender"
 	scriptErrorExitCode = 73
 	scriptPath          = "blender/app.py"
+	basePath            = "blender/base.blend"
 	stellaPrefix        = "[stella]"
 )
 
@@ -30,6 +31,7 @@ func (p Planet) CreateModel() error {
 	}
 
 	absoluteScriptPath := path.Join(cwd, scriptPath)
+	absoluteBasePath := path.Join(cwd, basePath)
 
 	blenderCmd := exec.Command(
 		blenderExe,
@@ -37,7 +39,7 @@ func (p Planet) CreateModel() error {
 		"--python-use-system-env",
 		"--python-exit-code", fmt.Sprint(scriptErrorExitCode),
 		"--python", absoluteScriptPath,
-		"--", string(marshalled),
+		"--", absoluteBasePath, string(marshalled),
 	)
 
 	var stdout bytes.Buffer
@@ -62,6 +64,8 @@ func (p Planet) CreateModel() error {
 
 		output += fmt.Sprint(strings.TrimPrefix(line, stellaPrefix), "\n")
 	}
+
+	fmt.Println(output)
 
 	return nil
 }
