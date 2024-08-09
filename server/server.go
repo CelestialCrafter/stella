@@ -66,6 +66,7 @@ func SetupServer() {
 	e.Static("/models", "models")
 
 	e.GET("/api/planet/:hash", GetPlanet)
+	e.GET("/api/planet/new", NewPlanet)
 
 	e.Logger.Fatal(e.Start(bindAddress))
 }
