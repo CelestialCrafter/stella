@@ -49,12 +49,14 @@ func hash() []byte {
 	return hash[:]
 }
 
+func frangeWrapper(r *rand.Rand) func(min float32, max float32) float32 {
+	return func(min, max float32) float32 {
+		return (r.Float32() * (max - min)) + min
+	}
+}
+
 func NewPlanet(features PlanetFeatures) Planet {
 	cwd, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-
 	if err != nil {
 		panic(err)
 	}
@@ -62,18 +64,14 @@ func NewPlanet(features PlanetFeatures) Planet {
 	newHash := hash()
 	newHashInt := int64(binary.BigEndian.Uint32(newHash))
 	r := rand.New(rand.NewSource(newHashInt))
+	frange := frangeWrapper(r)
 
 	values := PlanetValues{
-		// 10.0 to 20.0
-		NormalSize: (r.Float32() * 10) + 10,
-		// [0.0 to 255.0] * 3
-		NormalColor: [3]float32{r.Float32() * 255, r.Float32() * 255, r.Float32() * 255},
-		// 20.0 to 30.0
-		StarSize: (r.Float32() * 10) + 20,
-		// 0.0 to 5.0
-		StarBrightness: (r.Float32() * 5),
-		// [0.0 to 85.0] * 2 + [115.0 to 255]
-		StarNeutronColor: [3]float32{r.Float32() * 85, r.Float32() * 85, (r.Float32() * 140) + 115},
+		NormalSize:       frange(10, 20),
+		NormalColor:      [3]float32{frange(0, 255), frange(0, 255), frange(0, 255)},
+		StarSize:         frange(20, 30),
+		StarBrightness:   frange(0, 5),
+		StarNeutronColor: [3]float32{frange(0, 85), frange(0, 85), frange(115, 255)},
 	}
 
 	return Planet{
