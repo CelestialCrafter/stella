@@ -4,26 +4,26 @@ import (
 	"crypto/sha256"
 	"encoding/binary"
 	"encoding/hex"
+	"fmt"
 	"math/rand"
 	"os"
 	"path"
 	"time"
+
+	"github.com/CelestialCrafter/stella/utils"
 )
 
 const (
 	modelPath = "models/"
 )
-
-type PlanetType string
-
 const (
 	NormalPlanet = "normal"
 	StarPlanet   = "star"
 )
 
 type PlanetFeatures struct {
-	Type        PlanetType `json:"type"`
-	StarNeutron bool       `json:"star_neutron"`
+	Type        string `json:"type"`
+	StarNeutron bool   `json:"star_neutron"`
 }
 
 type PlanetValues struct {
@@ -80,4 +80,32 @@ func NewPlanet(features PlanetFeatures) Planet {
 		Features:  features,
 		Values:    values,
 	}
+}
+
+func ExtractFeaturesFromBin(featuresBin int) (*PlanetFeatures, error) {
+	featuresBinSlice := utils.SplitInt(featuresBin)
+
+	var planetType string
+	switch featuresBinSlice[0] {
+	case 0:
+		planetType = NormalPlanet
+	case 1:
+		planetType = StarPlanet
+
+	default:
+		return nil, fmt.Errorf("unsupported value")
+	}
+
+	var StarNeutron bool
+	switch featuresBinSlice[1] {
+	case 0:
+		StarNeutron = false
+	case 1:
+		StarNeutron = true
+
+	default:
+		return nil, fmt.Errorf("unsupported value")
+	}
+
+	return &PlanetFeatures{Type: planetType, StarNeutron: StarNeutron}, nil
 }
