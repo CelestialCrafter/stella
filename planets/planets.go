@@ -2,11 +2,11 @@ package planets
 
 import (
 	"crypto/sha256"
+	"encoding/binary"
 	"encoding/hex"
 	"math/rand"
 	"os"
 	"path"
-	"strconv"
 	"time"
 )
 
@@ -41,28 +41,27 @@ type Planet struct {
 	Directory string         `json:"directory"`
 }
 
+func hash() []byte {
+	b := make([]byte, 4)
+	timestamp := time.Now().UnixNano()
+	binary.BigEndian.PutUint32(b, uint32(timestamp))
+	hash := sha256.Sum256(b)
+	return hash[:]
+}
+
 func NewPlanet(features PlanetFeatures) Planet {
 	cwd, err := os.Getwd()
 	if err != nil {
 		panic(err)
 	}
 
-	// @TODO set this to the hash instead of time.now
-	dateBytes, err := time.Now().MarshalBinary()
 	if err != nil {
 		panic(err)
 	}
 
-	hash := sha256.New()
-	hash.Write(dateBytes)
-
-	hashStr := hex.EncodeToString(hash.Sum(nil))
-	hashInt, err := strconv.Atoi(hashStr)
-	if err != nil {
-		panic(err)
-	}
-
-	r := rand.New(rand.NewSource(int64(hashInt)))
+	newHash := hash()
+	newHashInt := int64(binary.BigEndian.Uint32(newHash))
+	r := rand.New(rand.NewSource(newHashInt))
 
 	values := PlanetValues{
 		// 10.0 to 20.0
@@ -78,7 +77,7 @@ func NewPlanet(features PlanetFeatures) Planet {
 	}
 
 	return Planet{
-		Hash:      hashStr,
+		Hash:      hex.EncodeToString(newHash),
 		Directory: path.Join(cwd, modelPath),
 		Features:  features,
 		Values:    values,
