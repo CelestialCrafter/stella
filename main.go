@@ -13,8 +13,7 @@ func main() {
 
 	err := planet.CreateModel()
 	if err != nil {
-		log.Error(err)
-		panic(err)
+		log.Fatal("could not create model", "error", err)
 	}
 
 	server.SetupServer()

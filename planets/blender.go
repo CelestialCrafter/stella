@@ -8,6 +8,9 @@ import (
 	"os/exec"
 	"path"
 	"strings"
+	"time"
+
+	"github.com/charmbracelet/log"
 )
 
 const (
@@ -19,6 +22,7 @@ const (
 )
 
 func (p Planet) CreateModel() error {
+	start := time.Now()
 	marshalled, err := json.Marshal(p)
 	if err != nil {
 		return err
@@ -56,16 +60,15 @@ func (p Planet) CreateModel() error {
 		return err
 	}
 
-	output := ""
 	for _, line := range strings.Split(stdout.String(), "\n") {
 		if !strings.HasPrefix(line, stellaPrefix) {
 			continue
 		}
 
-		output += fmt.Sprint(strings.TrimPrefix(line, stellaPrefix), "\n")
+		line = fmt.Sprint(strings.TrimPrefix(line, stellaPrefix), "\n")
+		log.Infof("blender -> stella: %s", line)
 	}
 
-	fmt.Println(output)
-
+	log.Info("rendered new model", "hash", p.Hash, "duration", time.Since(start))
 	return nil
 }
