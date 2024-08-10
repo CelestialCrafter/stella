@@ -90,7 +90,7 @@ func GetPlanetByHash(hash string) (*Planet, error) {
 	return &planet, nil
 }
 
-func CreatePlanet(hash string, features int, userId string) error {
+func CreatePlanet(hash string, features string, userId string) error {
 	_, err := db.Exec("INSERT INTO planets (hash, features, user_id) VALUES (?, ?, ?)", hash, features, userId)
 
 	return err

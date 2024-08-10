@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 
@@ -42,22 +43,16 @@ func NewPlanet(c echo.Context) error {
 		})
 	}
 
-	featuresBin, err := strconv.Atoi(c.QueryParam("features"))
+	featuresString := c.QueryParam("features")
+	planetFeatures := planets.PlanetFeatures{}
+	err := json.Unmarshal([]byte(featuresString), &planetFeatures)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": err.Error(),
 		})
 	}
 
-	planetsFeatures, err := planets.ExtractFeaturesFromBin(featuresBin)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-			"message": err.Error(),
-		})
-	}
-
-	planet := planets.NewPlanet(*planetsFeatures)
-
+	planet := planets.NewPlanet(planetFeatures)
 	err = planet.CreateModel()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
@@ -65,7 +60,8 @@ func NewPlanet(c echo.Context) error {
 		})
 	}
 
-	err = db.CreatePlanet(planet.Hash, featuresBin, "") // @TODO FIX THIS
+	// @TODO add user id
+	err = db.CreatePlanet(planet.Hash, featuresString, "")
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": err.Error(),
@@ -74,6 +70,6 @@ func NewPlanet(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"hash":     planet.Hash,
-		"features": featuresBin,
+		"features": planetFeatures,
 	})
 }

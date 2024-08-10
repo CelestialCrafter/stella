@@ -9,15 +9,10 @@ import (
 	"path"
 
 	"github.com/CelestialCrafter/stella/common"
-	"github.com/CelestialCrafter/stella/utils"
 )
 
 const (
 	modelPath = "models/"
-)
-const (
-	NormalPlanet = "normal"
-	StarPlanet   = "star"
 )
 
 type PlanetFeatures struct {
@@ -71,33 +66,4 @@ func NewPlanet(features PlanetFeatures) Planet {
 		Features:  features,
 		Values:    values,
 	}
-}
-
-func ExtractFeaturesFromBin(featuresBin int) (*PlanetFeatures, error) {
-	// featuresBinSlice := utils.SplitInt(featuresBin)
-	featuresBinSlice := []int{}
-
-	var planetType string
-	switch featuresBinSlice[0] {
-	case 0:
-		planetType = NormalPlanet
-	case 1:
-		planetType = StarPlanet
-
-	default:
-		return nil, fmt.Errorf("unsupported value")
-	}
-
-	var StarNeutron bool
-	switch featuresBinSlice[1] {
-	case 0:
-		StarNeutron = false
-	case 1:
-		StarNeutron = true
-
-	default:
-		return nil, fmt.Errorf("unsupported value")
-	}
-
-	return &PlanetFeatures{Type: planetType, StarNeutron: StarNeutron}, nil
 }
