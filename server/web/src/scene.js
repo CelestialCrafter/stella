@@ -20,7 +20,7 @@ export const selectedPlanet = () => {
 	if (intersects.length > 0)
 		for (const intersect of intersects) {
 			if (intersect.object.userData.name != 'Sphere') continue;
-			return intersect.object;
+			return intersect.object.name;
 		}
 
 	return null;

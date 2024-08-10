@@ -1,24 +1,32 @@
 <script>
 	import { onMount } from 'svelte';
-	import { initScene, addPlanets, selectedPlanet } from './scene.js';
+	import { selectedPlanet } from './scene.js';
 
-	let canvas;
+	import Scene from './Scene.svelte';
+	import SelectedPlanet from './SelectedPlanet.svelte';
+
+	$: planets = {};
+	$: selected = null;
 	onMount(async () => {
 		const userId = 'google-100735534519069903161';
-		const planets = await (await fetch(`/api/planets/${userId}`)).json();
-
-		addPlanets(planets.map(planet => planet.hash));
-		initScene(canvas);
+		const planetsArray = await (await fetch(`/api/planets/${userId}`)).json();
+		planets = planetsArray.reduce((acc, x) => ({ ...acc, [x.hash]: x }), {});
 	});
-
-	const handleCanvasClick = () => {
-		const selected = selectedPlanet();
-		selected != null && console.log(selected.name);
-	};
 </script>
 
 <main>
-	<canvas on:click={handleCanvasClick} bind:this={canvas}></canvas>
+	{#if Object.keys(planets).length < 1}
+		<span>
+			Loading...<br />
+			(or no planets)
+		</span>
+	{:else}
+		<SelectedPlanet planet={selected ? planets[selected] : null} />
+		<Scene
+			handleCanvasClick={() => (selected = selectedPlanet())}
+			planets={Object.values(planets)}
+		/>
+	{/if}
 </main>
 
 <style>
