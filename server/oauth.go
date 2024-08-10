@@ -83,7 +83,6 @@ func Callback(c echo.Context) error {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
-	// @TODO refresh token
 	claims.ID = fmt.Sprint("google-", claims.ID)
 	token, err := sign(claims)
 	if err != nil {

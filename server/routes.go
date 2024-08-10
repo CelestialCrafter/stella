@@ -11,7 +11,8 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-func svelte(g *echo.Group) {
+func svelte(e *echo.Echo) {
+	g := e.Group("/app")
 	svelteDevUrl, err := url.Parse(svelteDevAddress)
 	if err != nil {
 		panic(err)
@@ -22,16 +23,17 @@ func svelte(g *echo.Group) {
 		g.Use(middleware.Proxy(middleware.NewRoundRobinBalancer([]*middleware.ProxyTarget{{
 			URL: svelteDevUrl,
 		}})))
+		e.Static("/public", "server/web/public/")
 	} else {
 		g.Use(middleware.StaticWithConfig(middleware.StaticConfig{
 			HTML5: true,
-			Root:  "server/web/dist",
+			Root:  "server/web/dist/",
 		}))
 	}
 }
 
 func setupRoutes(e *echo.Echo) {
-	svelte(e.Group("/app"))
+	svelte(e)
 
 	m := e.Group("/models")
 	m.Use(middleware.GzipWithConfig(middleware.GzipConfig{

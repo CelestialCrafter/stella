@@ -11,4 +11,4 @@
 	});
 </script>
 
-<canvas on:click={handleCanvasClick} bind:this={canvas}></canvas>
+<canvas on:mousedown={handleCanvasClick} bind:this={canvas}></canvas>

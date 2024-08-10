@@ -1,10 +1,11 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { HDRCubeTextureLoader } from 'three/addons/loaders/HDRCubeTextureLoader.js';
 const FOV = 70;
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(FOV, window.innerWidth / window.innerHeight, 0.1, 10000);
+const camera = new THREE.PerspectiveCamera(FOV, window.innerWidth / window.innerHeight, 0.1, 20000);
 const pointer = new THREE.Vector2();
 const raycaster = new THREE.Raycaster();
 const loader = new GLTFLoader();
@@ -19,7 +20,7 @@ export const selectedPlanet = () => {
 
 	if (intersects.length > 0)
 		for (const intersect of intersects) {
-			if (intersect.object.userData.name != 'Sphere') continue;
+			if (intersect.object.userData.name != 'Planet') continue;
 			return intersect.object.name;
 		}
 
@@ -27,11 +28,16 @@ export const selectedPlanet = () => {
 };
 
 const animate = () => {
-	requestAnimationFrame(animate);
-
 	raycaster.setFromCamera(pointer, camera);
 	controls.update();
 	renderer.render(scene, camera);
+};
+
+const resize = () => {
+	if (!renderer) return;
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
 };
 
 export const initScene = canvas => {
@@ -39,15 +45,25 @@ export const initScene = canvas => {
 		antialias: true,
 		canvas
 	});
+	renderer.toneMapping = THREE.ACESFilmicToneMapping;
+	renderer.toneMappingExposure = 0.5;
+	camera.position.set(100, 100, 400);
 
 	controls = new OrbitControls(camera, renderer.domElement);
-
-	camera.position.set(50, 0, 50);
-	controls.target = new THREE.Vector3(0, 0, 0);
+	controls.autoRotate = true;
+	controls.maxDistance = controls.getDistance();
+	controls.minDistance = controls.getDistance() / 5;
+	controls.enablePan = false;
 	controls.update();
 
+	const texture = new THREE.TextureLoader().load('public/skybox.jpg', () => {
+		texture.mapping = THREE.EquirectangularReflectionMapping;
+		texture.colorSpace = THREE.SRGBColorSpace;
+		scene.background = texture;
+	});
+
 	resize();
-	animate();
+	renderer.setAnimationLoop(animate);
 };
 
 const load = url =>
@@ -76,13 +92,6 @@ export const addPlanets = async hashes => {
 const pointerMove = event => {
 	pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
 	pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
-};
-
-const resize = () => {
-	if (!renderer) return;
-	renderer.setSize(window.innerWidth, window.innerHeight);
-	camera.aspect = window.innerWidth / window.innerHeight;
-	camera.updateProjectionMatrix();
 };
 
 window.addEventListener('pointermove', pointerMove);
