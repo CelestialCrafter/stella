@@ -27,3 +27,4 @@ go.work.sum
 
 # Sqlite db
 *.db
+bruno/
