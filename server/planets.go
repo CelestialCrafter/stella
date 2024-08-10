@@ -6,6 +6,7 @@ import (
 
 	"github.com/CelestialCrafter/stella/db"
 	"github.com/CelestialCrafter/stella/planets"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 )
 
@@ -31,6 +32,10 @@ func GetAllPlanets(c echo.Context) error {
 }
 
 func NewPlanet(c echo.Context) error {
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(*userClaims)
+	id := claims.ID
+
 	// @TODO restrict features to random/modifiers (once demo over)
 	features := new(planets.PlanetFeatures)
 	err := c.Bind(features)
@@ -45,7 +50,7 @@ func NewPlanet(c echo.Context) error {
 	}
 
 	// @TODO add user id
-	err = db.CreatePlanet(planet.Hash, *features, "")
+	err = db.CreatePlanet(planet.Hash, *features, id)
 	if err != nil {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
@@ -55,7 +60,11 @@ func NewPlanet(c echo.Context) error {
 
 func DeletePlanet(c echo.Context) error {
 	hash := c.Param("hash")
-	planet, err := db.RemovePlanet(hash)
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(*userClaims)
+	id := claims.ID
+
+	planet, err := db.RemovePlanet(hash, id)
 	if err != nil {
 		if errors.Is(err, db.NotFoundError) {
 			return jsonError(c, http.StatusNotFound, err)

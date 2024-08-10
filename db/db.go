@@ -16,7 +16,7 @@ import (
 const dbPath = "stella.db"
 
 type User struct {
-	UserId string `json:"user_id" db:"user_id"`
+	UserId string `json:"id" db:"user_id"`
 	Admin  bool   `json:"admin" db:"admin"`
 	Coins  uint   `json:"coins" db:"coins"`
 }
@@ -98,7 +98,7 @@ func GetPlanet(hash string) (planets.Planet, error) {
 func GetPlanets(userId string) ([]planets.Planet, error) {
 	var dbPlanets []dbPlanet
 
-	err := db.Select(&dbPlanets, "SELECT hash, features FROM planets WHERE user_id = ?", userId)
+	err := db.Select(&dbPlanets, "SELECT hash, features FROM planets WHERE owner_id = ?", userId)
 	if err != nil {
 		return nil, err
 	}
@@ -125,9 +125,9 @@ func CreatePlanet(hash string, features planets.PlanetFeatures, userId string) e
 	return err
 }
 
-func RemovePlanet(hash string) (planets.Planet, error) {
+func RemovePlanet(hash string, owner string) (planets.Planet, error) {
 	dbPlanet := dbPlanet{}
-	err := db.Get(&dbPlanet, "SELECT hash, features FROM planets WHERE hash = ?", hash)
+	err := db.Get(&dbPlanet, "SELECT hash, features FROM planets WHERE hash = ? AND owner_id = ?", hash, owner)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return planets.Planet{}, NotFoundError
@@ -145,9 +145,12 @@ func RemovePlanet(hash string) (planets.Planet, error) {
 
 func CreateUser(id string) (User, error) {
 	user := User{}
-	row := db.QueryRow("INSERT INTO users (user_id) VALUES (?) ON CONFLICT DO NOTHING RETURNING (user_id, admin, coins)", id)
+	_, err := db.Exec("INSERT INTO users (user_id) VALUES (?) ON CONFLICT DO NOTHING", id)
+	if err != nil {
+		return User{}, err
+	}
 
-	err := row.Scan(&user)
+	err = db.Get(&user, "SELECT user_id, admin, coins FROM users WHERE user_id = ?", id)
 	if err != nil {
 		return User{}, err
 	}

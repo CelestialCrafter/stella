@@ -14,6 +14,15 @@ const (
 	modelPath = "models/"
 )
 
+var cwd = func() string {
+	cwd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
+	return cwd
+}()
+
 type PlanetFeatures struct {
 	Type        string `json:"type" validate:"required"`
 	StarNeutron bool   `json:"star_neutron"`
@@ -41,11 +50,6 @@ func frangeWrapper(r *rand.Rand) func(min float32, max float32) float32 {
 }
 
 func NewPlanet(features PlanetFeatures, newHash []byte) Planet {
-	cwd, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-
 	if newHash == nil {
 		newHash = common.Hash()
 	}
