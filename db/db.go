@@ -33,14 +33,22 @@ func InitDB() {
 		log.Fatal("Failed to open database:", err)
 	}
 
-	createTableSQL := `CREATE TABLE IF NOT EXISTS planets (
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS planets (
         hash TEXT PRIMARY KEY,
-        features INTEGER NOT NULL
-    );`
-
-	_, err = db.Exec(createTableSQL)
+        features INTEGER NOT NULL,
+		user_id	TEXT NOT NULL,
+		FOREIGN KEY (user_id) REFERENCES users (id)
+    );`)
 	if err != nil {
 		log.Fatal("Failed to create table:", err)
+	}
+
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS users (
+        id TEXT PRIMARY KEY,
+        coins INTEGER NOT NULL DEFAULT 10
+    )`)
+	if err != nil {
+		log.Fatal("Failed to create users table:", err)
 	}
 
 	log.Info("Database initialized successfully")
