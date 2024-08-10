@@ -78,6 +78,20 @@ func CreatePlanet(hash string, features string, userId string) error {
 	return err
 }
 
+func RemovePlanet(hash string) (*Planet, error) {
+	planet, err := GetPlanetByHash(hash)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = db.Exec("DELETE FROM planets WHERE hash = ?", hash)
+	if err != nil {
+		return nil, err
+	}
+
+	return planet, nil
+}
+
 func CreateUser(id string) error {
 	_, err := db.Exec("INSERT INTO users (id) VALUES (?) ON CONFLICT DO NOTHING", id)
 
