@@ -51,6 +51,8 @@ func setupRoutes(e *echo.Echo) {
 
 	a.GET("/user/:id", GetUser).Name = "get-user"
 
+	r.PUT("/key/new", NewApiKey).Name = "create-api-key"
+
 	e.GET("/auth/login", Login).Name = "oauth-login"
 	e.GET("/auth/callback", Callback).Name = "oauth-callback"
 
