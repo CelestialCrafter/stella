@@ -3,6 +3,7 @@ package server
 import (
 	"github.com/charmbracelet/log"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 const (
@@ -20,7 +21,13 @@ func SetupServer() {
 	e := echo.New()
 	e.HideBanner = true
 
+	e.Use(middleware.RequestID())
 	logging(e)
+	e.Use(middleware.RecoverWithConfig(middleware.RecoverConfig{
+		LogErrorFunc: logPanicRecover,
+	}))
+	e.Use(middleware.CORS())
+
 	setupRoutes(e)
 
 	err := e.Start(bindAddress)

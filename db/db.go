@@ -47,6 +47,7 @@ func InitDB() {
 
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS users (
 		id TEXT PRIMARY KEY,
+		admin BOOL NOT NULL DEFAULT FALSE,
 		coins INTEGER NOT NULL DEFAULT 10
 	)`)
 	if err != nil {

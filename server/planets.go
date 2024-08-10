@@ -25,7 +25,7 @@ func GetPlanet(c echo.Context) error {
 	})
 }
 
-func PostPlanet(c echo.Context) error {
+func NewPlanet(c echo.Context) error {
 	if c.QueryParam("features") == "" {
 		return jsonError(c, http.StatusBadRequest, errors.New("features were not provided"))
 	}

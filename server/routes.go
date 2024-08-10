@@ -20,17 +20,29 @@ func svelte(g *echo.Group) {
 			URL: svelteDevUrl,
 		}})))
 	} else {
-		g.Static("/", "server/web/dist")
+		g.Use(middleware.StaticWithConfig(middleware.StaticConfig{
+			HTML5: true,
+			Root:  "server/web/dist",
+		}))
 	}
 }
 
 func setupRoutes(e *echo.Echo) {
 	svelte(e.Group("/app"))
-	e.Static("/models", "models")
 
-	e.GET("/api/planet/:hash", GetPlanet)
-	e.POST("/api/planet/new", PostPlanet)
-	e.DELETE("/api/planet/delete", DeletePlanet)
+	r := e.Group("/")
+	r.Use(jwtMiddleware())
+
+	m := e.Group("/models")
+	m.Use(middleware.GzipWithConfig(middleware.GzipConfig{
+		Level: 6,
+	}))
+
+	m.Static("/", "models")
+
+	r.GET("/api/planet/:hash", GetPlanet)
+	r.POST("/api/planet/new", NewPlanet)
+	r.DELETE("/api/planet/delete", DeletePlanet)
 
 	e.GET("/api/auth/login", Login)
 	e.GET("/api/auth/callback", Callback)

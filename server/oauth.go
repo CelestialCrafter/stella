@@ -29,13 +29,8 @@ var config = &oauth2.Config{
 	Endpoint:     google.Endpoint,
 }
 
-type userClaims struct {
-	ID    string `json:"id"`
-	Admin bool   `json:"admin"`
-	jwt.RegisteredClaims
-}
-
 func Login(c echo.Context) error {
+	panic("lawnawba")
 
 	state := hex.EncodeToString(common.Hash())
 	url := config.AuthCodeURL(state)
@@ -92,7 +87,7 @@ func Callback(c echo.Context) error {
 
 	// @TODO refresh token
 	claims.ID = fmt.Sprint("google-", claims.ID)
-	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(os.Getenv("JWT_SECRET")))
+	token, err := sign(claims)
 	if err != nil {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
