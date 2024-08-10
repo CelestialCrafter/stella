@@ -36,9 +36,18 @@ func NewPlanet(c echo.Context) error {
 	claims := user.Claims.(*userClaims)
 	id := claims.ID
 
+	dbUser, err := db.GetUser(id)
+	if err != nil {
+		return jsonError(c, http.StatusBadRequest, err)
+	}
+
+	if dbUser.Coins <= 0 {
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "not enough coins"})
+	}
+
 	// @TODO restrict features to random/modifiers (once demo over)
 	features := new(planets.PlanetFeatures)
-	err := c.Bind(features)
+	err = c.Bind(features)
 	if err != nil {
 		return jsonError(c, http.StatusBadRequest, err)
 	}
@@ -53,6 +62,9 @@ func NewPlanet(c echo.Context) error {
 	if err != nil {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
+
+	dbUser.Coins -= 1
+	db.UpdateUser(dbUser)
 
 	return c.JSON(http.StatusOK, planet)
 }
