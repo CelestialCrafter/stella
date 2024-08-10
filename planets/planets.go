@@ -4,8 +4,14 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"math/rand"
+	"os"
+	"path"
 
 	"github.com/CelestialCrafter/stella/common"
+)
+
+const (
+	modelPath = "models/"
 )
 
 type PlanetFeatures struct {
@@ -22,9 +28,10 @@ type PlanetValues struct {
 }
 
 type Planet struct {
-	Features PlanetFeatures `json:"features"`
-	Values   PlanetValues   `json:"values"`
-	Hash     string         `json:"hash"`
+	Features  PlanetFeatures `json:"features"`
+	Values    PlanetValues   `json:"values"`
+	Hash      string         `json:"hash"`
+	Directory string         `json:"directory"`
 }
 
 func frangeWrapper(r *rand.Rand) func(min float32, max float32) float32 {
@@ -34,6 +41,11 @@ func frangeWrapper(r *rand.Rand) func(min float32, max float32) float32 {
 }
 
 func NewPlanet(features PlanetFeatures, newHash []byte) Planet {
+	cwd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
 	if newHash == nil {
 		newHash = common.Hash()
 	}
@@ -50,8 +62,9 @@ func NewPlanet(features PlanetFeatures, newHash []byte) Planet {
 	}
 
 	return Planet{
-		Hash:     hex.EncodeToString(newHash),
-		Features: features,
-		Values:   values,
+		Hash:      hex.EncodeToString(newHash),
+		Directory: path.Join(cwd, modelPath),
+		Features:  features,
+		Values:    values,
 	}
 }
