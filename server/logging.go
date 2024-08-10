@@ -16,6 +16,7 @@ func logging(e *echo.Echo) {
 			if v.Error != nil {
 				log.Warn(
 					"request errored",
+					"method", c.Request().Method,
 					"uri", v.URI,
 					"code", v.Status,
 					"error", v.Error,
@@ -27,6 +28,7 @@ func logging(e *echo.Echo) {
 
 			log.Info(
 				"request",
+				"method", c.Request().Method,
 				"uri", v.URI,
 				"code", v.Status,
 				"ip", c.RealIP(),

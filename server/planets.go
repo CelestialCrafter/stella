@@ -1,7 +1,6 @@
 package server
 
 import (
-	"encoding/json"
 	"errors"
 	"net/http"
 
@@ -11,63 +10,59 @@ import (
 )
 
 func GetPlanet(c echo.Context) error {
-	planet, err := db.GetPlanetByHash(c.Param("hash"))
+	planet, err := db.GetPlanet(c.Param("hash"))
+	if err != nil {
+		if errors.Is(err, db.NotFoundError) {
+			return jsonError(c, http.StatusNotFound, err)
+		}
+		return jsonError(c, http.StatusInternalServerError, err)
+	}
+
+	return c.JSON(http.StatusOK, planet)
+}
+
+func GetAllPlanets(c echo.Context) error {
+	planets, err := db.GetPlanets(c.Param("id"))
 	if err != nil {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
-	if planet == nil {
-		return jsonError(c, http.StatusNotFound, errors.New("planet not found"))
-	}
-
-	return c.JSON(http.StatusOK, echo.Map{
-		"planet": planet,
-	})
+	return c.JSON(http.StatusOK, planets)
 }
 
 func NewPlanet(c echo.Context) error {
-	if c.QueryParam("features") == "" {
-		return jsonError(c, http.StatusBadRequest, errors.New("features were not provided"))
-	}
-
-	featuresString := c.QueryParam("features")
-	planetFeatures := planets.PlanetFeatures{}
-	err := json.Unmarshal([]byte(featuresString), &planetFeatures)
+	// @TODO restrict features to random/modifiers (once demo over)
+	features := new(planets.PlanetFeatures)
+	err := c.Bind(features)
 	if err != nil {
-		return jsonError(c, http.StatusInternalServerError, err)
+		return jsonError(c, http.StatusBadRequest, err)
 	}
 
-	planet := planets.NewPlanet(planetFeatures)
+	planet := planets.NewPlanet(*features, nil)
 	err = planet.CreateModel()
 	if err != nil {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
 	// @TODO add user id
-	err = db.CreatePlanet(planet.Hash, featuresString, "")
+	err = db.CreatePlanet(planet.Hash, *features, "")
 	if err != nil {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
-	return c.JSON(http.StatusOK, echo.Map{
-		"hash":     planet.Hash,
-		"features": planetFeatures,
-	})
+	return c.JSON(http.StatusOK, planet)
 }
 
 func DeletePlanet(c echo.Context) error {
-	if c.QueryParam("hash") == "" {
-		return jsonError(c, http.StatusBadRequest, errors.New("hash was not provided"))
-	}
-
-	hash := c.QueryParam("hash")
-
+	hash := c.Param("hash")
 	planet, err := db.RemovePlanet(hash)
 	if err != nil {
+		if errors.Is(err, db.NotFoundError) {
+			return jsonError(c, http.StatusNotFound, err)
+		}
+
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
-	return c.JSON(http.StatusOK, echo.Map{
-		"planet": planet,
-	})
+	return c.JSON(http.StatusOK, planet)
 }

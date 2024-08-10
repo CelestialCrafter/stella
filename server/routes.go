@@ -1,9 +1,12 @@
 package server
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 
+	"github.com/charmbracelet/log"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -30,9 +33,6 @@ func svelte(g *echo.Group) {
 func setupRoutes(e *echo.Echo) {
 	svelte(e.Group("/app"))
 
-	r := e.Group("/")
-	r.Use(jwtMiddleware())
-
 	m := e.Group("/models")
 	m.Use(middleware.GzipWithConfig(middleware.GzipConfig{
 		Level: 6,
@@ -40,11 +40,25 @@ func setupRoutes(e *echo.Echo) {
 
 	m.Static("/", "models")
 
-	r.GET("/api/planet/:hash", GetPlanet)
-	r.POST("/api/planet/new", NewPlanet)
-	r.DELETE("/api/planet/delete", DeletePlanet)
+	a := e.Group("/api")
+	r := a.Group("")
+	r.Use(jwtMiddleware())
 
-	e.GET("/api/auth/login", Login)
-	e.GET("/api/auth/callback", Callback)
+	a.GET("/planet/:hash", GetPlanet).Name = "get-planet"
+	r.DELETE("/planet/:hash", DeletePlanet).Name = "delete-planet"
+	r.POST("/planet/new", NewPlanet).Name = "create-planet"
 
+	a.GET("/auth/login", Login).Name = "oauth-login"
+	a.GET("/auth/callback", Callback).Name = "oauth-callback"
+
+	echoRoutes := e.Routes()
+	routes := make([]interface{}, 0)
+	for _, route := range echoRoutes {
+		if route.Method == "echo_route_not_found" || strings.Contains(route.Name, "StaticDirectoryHandler") {
+			continue
+		}
+
+		routes = append(routes, route.Name, fmt.Sprintf("%s %s", route.Method, route.Path))
+	}
+	log.Info("registered routes", routes...)
 }

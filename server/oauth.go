@@ -90,12 +90,13 @@ func Callback(c echo.Context) error {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
-	err = db.CreateUser(claims.ID)
+	user, err := db.CreateUser(claims.ID)
 	if err != nil {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{
 		"token": token,
+		"user":  user,
 	})
 }

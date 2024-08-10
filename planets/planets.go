@@ -4,18 +4,12 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"math/rand"
-	"os"
-	"path"
 
 	"github.com/CelestialCrafter/stella/common"
 )
 
-const (
-	modelPath = "models/"
-)
-
 type PlanetFeatures struct {
-	Type        string `json:"type"`
+	Type        string `json:"type" validate:"required"`
 	StarNeutron bool   `json:"star_neutron"`
 }
 
@@ -28,10 +22,9 @@ type PlanetValues struct {
 }
 
 type Planet struct {
-	Features  PlanetFeatures `json:"features"`
-	Values    PlanetValues   `json:"values"`
-	Hash      string         `json:"hash"`
-	Directory string         `json:"directory"`
+	Features PlanetFeatures `json:"features"`
+	Values   PlanetValues   `json:"values"`
+	Hash     string         `json:"hash"`
 }
 
 func frangeWrapper(r *rand.Rand) func(min float32, max float32) float32 {
@@ -40,13 +33,10 @@ func frangeWrapper(r *rand.Rand) func(min float32, max float32) float32 {
 	}
 }
 
-func NewPlanet(features PlanetFeatures) Planet {
-	cwd, err := os.Getwd()
-	if err != nil {
-		panic(err)
+func NewPlanet(features PlanetFeatures, newHash []byte) Planet {
+	if newHash == nil {
+		newHash = common.Hash()
 	}
-
-	newHash := common.Hash()
 	newHashInt := int64(binary.BigEndian.Uint32(newHash))
 	r := rand.New(rand.NewSource(newHashInt))
 	frange := frangeWrapper(r)
@@ -60,9 +50,8 @@ func NewPlanet(features PlanetFeatures) Planet {
 	}
 
 	return Planet{
-		Hash:      hex.EncodeToString(newHash),
-		Directory: path.Join(cwd, modelPath),
-		Features:  features,
-		Values:    values,
+		Hash:     hex.EncodeToString(newHash),
+		Features: features,
+		Values:   values,
 	}
 }

@@ -2,9 +2,12 @@ package db
 
 import (
 	"database/sql"
+	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"os"
 
+	"github.com/CelestialCrafter/stella/planets"
 	"github.com/charmbracelet/log"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
@@ -12,12 +15,19 @@ import (
 
 const dbPath = "stella.db"
 
-type Planet struct {
+type User struct {
+	UserId string `json:"user_id" db:"user_id"`
+	Admin  bool   `json:"admin" db:"admin"`
+	Coins  uint   `json:"coins" db:"coins"`
+}
+
+type dbPlanet struct {
 	Hash     string `db:"hash"`
-	Features int    `db:"features"`
+	Features string `db:"features"`
 }
 
 var db *sqlx.DB
+var NotFoundError = errors.New("object not found")
 
 func InitDB() {
 	var err error
@@ -37,16 +47,16 @@ func InitDB() {
 
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS planets (
 		hash TEXT PRIMARY KEY,
-		features INTEGER NOT NULL,
-		user_id	TEXT NOT NULL,
-		FOREIGN KEY (user_id) REFERENCES users (id)
+		features TEXT NOT NULL,
+		owner_id TEXT NOT NULL,
+		FOREIGN KEY (owner_id) REFERENCES users (user_id)
 	);`)
 	if err != nil {
 		log.Fatal("could not create planets table", "error", err)
 	}
 
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS users (
-		id TEXT PRIMARY KEY,
+		user_id TEXT PRIMARY KEY,
 		admin BOOL NOT NULL DEFAULT FALSE,
 		coins INTEGER NOT NULL DEFAULT 10
 	)`)
@@ -57,44 +67,90 @@ func InitDB() {
 	log.Info("initialized database")
 }
 
-func GetPlanetByHash(hash string) (*Planet, error) {
-	var planet Planet
+func dbPlanetToPlanet(dbPlanet dbPlanet) (planets.Planet, error) {
+	features := planets.PlanetFeatures{}
+	err := json.Unmarshal([]byte(dbPlanet.Features), &features)
+	if err != nil {
+		return planets.Planet{}, err
+	}
 
-	err := db.Get(&planet, "SELECT hash, features FROM planets WHERE hash = ?", hash)
+	decodedHash, err := hex.DecodeString(dbPlanet.Hash)
+	if err != nil {
+		return planets.Planet{}, err
+	}
 
+	return planets.NewPlanet(features, decodedHash), nil
+}
+
+func GetPlanet(hash string) (planets.Planet, error) {
+	var dbPlanet dbPlanet
+	err := db.Get(&dbPlanet, "SELECT hash, features FROM planets WHERE hash = ?", hash)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			// No planet found with this hash
-			return nil, nil
+			return planets.Planet{}, NotFoundError
 		}
+		return planets.Planet{}, err
+	}
+
+	return dbPlanetToPlanet(dbPlanet)
+}
+
+func GetPlanets(userId string) ([]planets.Planet, error) {
+	var dbPlanets []dbPlanet
+
+	err := db.Select(&dbPlanets, "SELECT hash, features FROM planets WHERE user_id = ?", userId)
+	if err != nil {
 		return nil, err
 	}
 
-	return &planet, nil
+	planets := make([]planets.Planet, len(dbPlanets))
+	for i, dbPlanet := range dbPlanets {
+		planets[i], err = dbPlanetToPlanet(dbPlanet)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return planets, nil
 }
 
-func CreatePlanet(hash string, features string, userId string) error {
-	_, err := db.Exec("INSERT INTO planets (hash, features, user_id) VALUES (?, ?, ?)", hash, features, userId)
+func CreatePlanet(hash string, features planets.PlanetFeatures, userId string) error {
+	featuresBytes, err := json.Marshal(features)
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec("INSERT INTO planets (hash, features, owner_id) VALUES (?, ?, ?)", hash, string(featuresBytes), userId)
 
 	return err
 }
 
-func RemovePlanet(hash string) (*Planet, error) {
-	planet, err := GetPlanetByHash(hash)
+func RemovePlanet(hash string) (planets.Planet, error) {
+	dbPlanet := dbPlanet{}
+	err := db.Get(&dbPlanet, "SELECT hash, features FROM planets WHERE hash = ?", hash)
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sql.ErrNoRows) {
+			return planets.Planet{}, NotFoundError
+		}
+		return planets.Planet{}, err
 	}
 
 	_, err = db.Exec("DELETE FROM planets WHERE hash = ?", hash)
 	if err != nil {
-		return nil, err
+		return planets.Planet{}, err
 	}
 
-	return planet, nil
+	return dbPlanetToPlanet(dbPlanet)
 }
 
-func CreateUser(id string) error {
-	_, err := db.Exec("INSERT INTO users (id) VALUES (?) ON CONFLICT DO NOTHING", id)
+func CreateUser(id string) (User, error) {
+	user := User{}
+	row := db.QueryRow("INSERT INTO users (user_id) VALUES (?) ON CONFLICT DO NOTHING RETURNING (user_id, admin, coins)", id)
 
-	return err
+	err := row.Scan(&user)
+	if err != nil {
+		return User{}, err
+	}
+
+	return user, nil
 }
