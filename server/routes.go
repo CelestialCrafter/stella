@@ -51,8 +51,8 @@ func setupRoutes(e *echo.Echo) {
 
 	a.GET("/user/:id", GetUser).Name = "get-user"
 
-	a.GET("/auth/login", Login).Name = "oauth-login"
-	a.GET("/auth/callback", Callback).Name = "oauth-callback"
+	e.GET("/auth/login", Login).Name = "oauth-login"
+	e.GET("/auth/callback", Callback).Name = "oauth-callback"
 
 	echoRoutes := e.Routes()
 	routes := make([]interface{}, 0)

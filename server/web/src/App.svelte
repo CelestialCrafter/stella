@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { selectedPlanet } from './scene.js';
+	import * as jose from 'jose';
 
 	import Scene from './Scene.svelte';
 	import SelectedPlanet from './SelectedPlanet.svelte';
@@ -8,8 +9,10 @@
 	$: planets = {};
 	$: selected = null;
 	onMount(async () => {
-		const userId = 'google-100735534519069903161';
-		const planetsArray = await (await fetch(`/api/planets/${userId}`)).json();
+		if (!window.localStorage.getItem('token')) return window.location.assign('/auth/login');
+
+		const token = jose.decodeJwt(localStorage.getItem('token'));
+		const planetsArray = await (await fetch(`/api/planets/${token.id}`)).json();
 		planets = planetsArray.reduce((acc, x) => ({ ...acc, [x.hash]: x }), {});
 	});
 </script>

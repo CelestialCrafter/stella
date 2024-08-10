@@ -19,7 +19,7 @@ import (
 	"golang.org/x/oauth2/google"
 )
 
-const redirectUrl = "http://localhost:8000/api/auth/callback"
+const redirectUrl = "http://localhost:8000/auth/callback"
 
 var config = &oauth2.Config{
 	ClientID:     os.Getenv("GOOGLE_OAUTH_ID"),
@@ -90,13 +90,20 @@ func Callback(c echo.Context) error {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
-	user, err := db.CreateUser(claims.ID)
+	_, err = db.CreateUser(claims.ID)
 	if err != nil {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
-	return c.JSON(http.StatusOK, echo.Map{
-		"token": token,
-		"user":  user,
-	})
+	return c.HTML(http.StatusOK, fmt.Sprintf(`
+		<!doctype html>
+		<html>
+			<script>
+				localStorage.setItem("token", "%s");
+				window.location.assign("/app")
+			</script>
+
+			Click <a href="/app">here</a> to go back
+		</html>
+	`, token))
 }
