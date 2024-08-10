@@ -163,9 +163,6 @@ func GetUser(id string) (User, error) {
 
 	err := db.Get(&user, "SELECT user_id, admin, coins FROM users WHERE user_id = ?", id)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return User{}, NotFoundError
-		}
 		return User{}, err
 	}
 
@@ -174,6 +171,17 @@ func GetUser(id string) (User, error) {
 
 func UpdateUser(user User) error {
 	_, err := db.Exec("UPDATE users SET admin = ?, coins = ? WHERE user_id = ?", user.Admin, user.Coins, user.UserId)
+
+	return err
+}
+
+func UpdatePlanet(oldHash string, newHash string, features planets.PlanetFeatures, userId string) error {
+	featuresBytes, err := json.Marshal(features)
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec("UPDATE planets SET hash = ?, features = ?, owner_id = ? WHERE hash = ?", newHash, string(featuresBytes), userId, oldHash)
 
 	return err
 }
