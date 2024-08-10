@@ -6,17 +6,18 @@ import (
 	"os"
 
 	"github.com/charmbracelet/log"
+	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 const dbPath = "stella.db"
 
 type Planet struct {
-	Hash     string
-	Features int
+	Hash     string `db:"hash"`
+	Features int    `db:"features"`
 }
 
-var db *sql.DB
+var db *sqlx.DB
 
 func InitDB() {
 	var err error
@@ -29,7 +30,7 @@ func InitDB() {
 		file.Close()
 	}
 
-	db, err = sql.Open("sqlite3", dbPath)
+	db, err = sqlx.Connect("sqlite3", dbPath)
 	if err != nil {
 		log.Fatal("could not open database", "error", err)
 	}
@@ -58,7 +59,7 @@ func InitDB() {
 func GetPlanetByHash(hash string) (*Planet, error) {
 	var planet Planet
 
-	err := db.QueryRow("SELECT hash, features FROM planets WHERE hash = ?", hash).Scan(&planet.Hash, &planet.Features)
+	err := db.Get(&planet, "SELECT hash, features FROM planets WHERE hash = ?", hash)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
