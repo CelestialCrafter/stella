@@ -20,7 +20,7 @@ func logging(e *echo.Echo) {
 					"code", v.Status,
 					"error", v.Error,
 					"ip", c.RealIP(),
-					"id", c.Response().Header().Get(echo.HeaderXRequestID),
+					"id", getRequestId(c),
 				)
 				return nil
 			}
@@ -30,21 +30,19 @@ func logging(e *echo.Echo) {
 				"uri", v.URI,
 				"code", v.Status,
 				"ip", c.RealIP(),
-				"id", c.Response().Header().Get(echo.HeaderXRequestID),
+				"id", getRequestId(c),
 			)
 			return nil
 		},
 	}))
 }
+
 func logPanicRecover(c echo.Context, err error, stack []byte) error {
 	log.Error(
 		"request panic",
-		"error",
-		err,
-		"id",
-		c.Response().Header().Get(echo.HeaderXRequestID),
-		"stack",
-		string(stack),
+		"error", err,
+		"id", getRequestId(c),
+		"stack", string(stack),
 	)
 	return err
 }

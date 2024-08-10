@@ -1,6 +1,8 @@
 package server
 
 import (
+	"time"
+
 	"github.com/charmbracelet/log"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -17,6 +19,15 @@ func jsonError(c echo.Context, status int, err error) error {
 	})
 }
 
+func getRequestId(c echo.Context) string {
+	id := c.Response().Header().Get(echo.HeaderXRequestID)
+	if id == "" {
+		return "no id"
+	}
+
+	return id
+}
+
 func SetupServer() {
 	e := echo.New()
 	e.HideBanner = true
@@ -25,6 +36,11 @@ func SetupServer() {
 	logging(e)
 	e.Use(middleware.RecoverWithConfig(middleware.RecoverConfig{
 		LogErrorFunc: logPanicRecover,
+	}))
+	e.Use(middleware.TimeoutWithConfig(middleware.TimeoutConfig{
+		Skipper:      middleware.DefaultSkipper,
+		ErrorMessage: "response timed out",
+		Timeout:      30 * time.Second,
 	}))
 	e.Use(middleware.CORS())
 

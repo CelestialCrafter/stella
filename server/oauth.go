@@ -30,8 +30,6 @@ var config = &oauth2.Config{
 }
 
 func Login(c echo.Context) error {
-	panic("lawnawba")
-
 	state := hex.EncodeToString(common.Hash())
 	url := config.AuthCodeURL(state)
 
