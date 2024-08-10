@@ -3,7 +3,6 @@ package planets
 import (
 	"encoding/binary"
 	"encoding/hex"
-	"fmt"
 	"math/rand"
 	"os"
 	"path"

@@ -61,13 +61,13 @@ func Callback(c echo.Context) error {
 	state := c.QueryParam("state")
 
 	if err != nil || originalState.Value != state {
-		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+		return c.JSON(http.StatusBadRequest, echo.Map{
 			"message": "Could not verify state",
 		})
 	}
 	oauthToken, err := config.Exchange(context.Background(), c.QueryParam("code"))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+		return c.JSON(http.StatusBadRequest, echo.Map{
 			"message": err.Error(),
 		})
 	}
@@ -75,7 +75,7 @@ func Callback(c echo.Context) error {
 	client := config.Client(context.Background(), oauthToken)
 	res, err := client.Get("https://www.googleapis.com/oauth2/v1/userinfo")
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"message": err.Error(),
 		})
 	}
@@ -83,7 +83,7 @@ func Callback(c echo.Context) error {
 	defer res.Body.Close()
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"message": err.Error(),
 		})
 	}
@@ -98,7 +98,7 @@ func Callback(c echo.Context) error {
 
 	err = json.Unmarshal(body, &claims)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"message": err.Error(),
 		})
 	}
@@ -107,19 +107,19 @@ func Callback(c echo.Context) error {
 	claims.ID = fmt.Sprint("google-", claims.ID)
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(os.Getenv("JWT_SECRET")))
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"message": err.Error(),
 		})
 	}
 
 	err = db.CreateUser(claims.ID)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"message": err.Error(),
 		})
 	}
 
-	return c.JSON(http.StatusOK, map[string]interface{}{
+	return c.JSON(http.StatusOK, echo.Map{
 		"token": token,
 	})
 }
