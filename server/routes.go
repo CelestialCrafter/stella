@@ -29,7 +29,9 @@ func setupRoutes(e *echo.Echo) {
 	e.Static("/models", "models")
 
 	e.GET("/api/planet/:hash", GetPlanet)
-	e.GET("/api/planet/new", NewPlanet)
+	e.POST("/api/planet/new", PostPlanet)
+	e.DELETE("/api/planet/delete", DeletePlanet)
+
 	e.GET("/api/auth/login", Login)
 	e.GET("/api/auth/callback", Callback)
 

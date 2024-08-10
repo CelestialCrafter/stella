@@ -25,7 +25,7 @@ func GetPlanet(c echo.Context) error {
 	})
 }
 
-func NewPlanet(c echo.Context) error {
+func PostPlanet(c echo.Context) error {
 	if c.QueryParam("features") == "" {
 		return jsonError(c, http.StatusBadRequest, errors.New("features were not provided"))
 	}
@@ -52,5 +52,22 @@ func NewPlanet(c echo.Context) error {
 	return c.JSON(http.StatusOK, echo.Map{
 		"hash":     planet.Hash,
 		"features": planetFeatures,
+	})
+}
+
+func DeletePlanet(c echo.Context) error {
+	if c.QueryParam("hash") == "" {
+		return jsonError(c, http.StatusBadRequest, errors.New("hash was not provided"))
+	}
+
+	hash := c.QueryParam("hash")
+
+	planet, err := db.RemovePlanet(hash)
+	if err != nil {
+		return jsonError(c, http.StatusInternalServerError, err)
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"planet": planet,
 	})
 }
