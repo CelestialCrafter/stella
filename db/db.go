@@ -175,7 +175,7 @@ func UpdateUser(user User) error {
 	return err
 }
 
-func UpdatePlanet(oldHash string, newHash string, features planets.PlanetFeatures, userId string) error {
+func UpdatePlanet(oldHash string, newHash string, features *planets.PlanetFeatures, userId string) error {
 	featuresBytes, err := json.Marshal(features)
 	if err != nil {
 		return err
