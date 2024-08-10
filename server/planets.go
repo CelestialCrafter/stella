@@ -97,6 +97,11 @@ func DeletePlanet(c echo.Context) error {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
+	err = os.Remove("models/" + hash + "glb")
+	if err != nil {
+		return jsonError(c, http.StatusInternalServerError, err)
+	}
+
 	return c.JSON(http.StatusOK, planet)
 }
 
@@ -119,7 +124,10 @@ func UpdatePlanet(c echo.Context) error {
 	}
 
 	// Comment this following line if you want to keep all the planets that have been updated and that are not in the db
-	os.Remove("models/" + hash + "glb")
+	err = os.Remove("models/" + hash + "glb")
+	if err != nil {
+		return jsonError(c, http.StatusInternalServerError, err)
+	}
 
 	err = db.UpdatePlanet(hash, planet.Hash, features, id)
 	if err != nil {
