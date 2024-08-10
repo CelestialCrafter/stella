@@ -49,7 +49,6 @@ func NewPlanet(c echo.Context) error {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
-	// @TODO add user id
 	err = db.CreatePlanet(planet.Hash, *features, id)
 	if err != nil {
 		return jsonError(c, http.StatusInternalServerError, err)
