@@ -35,10 +35,6 @@ type userClaims struct {
 	jwt.RegisteredClaims
 }
 
-type user struct {
-	ID string `json:"id"`
-}
-
 func Login(c echo.Context) error {
 
 	state := hex.EncodeToString(common.Hash())
