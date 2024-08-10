@@ -3,12 +3,15 @@ package server
 import (
 	"errors"
 	"net/http"
+	"sync"
 
 	"github.com/CelestialCrafter/stella/db"
 	"github.com/CelestialCrafter/stella/planets"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 )
+
+var newPlanetLocks = map[string]*sync.Mutex{}
 
 func GetPlanet(c echo.Context) error {
 	planet, err := db.GetPlanet(c.Param("hash"))
@@ -35,6 +38,15 @@ func NewPlanet(c echo.Context) error {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(*userClaims)
 	id := claims.ID
+
+	_, ok := newPlanetLocks[id]
+	if !ok {
+		newPlanetLocks[id] = &sync.Mutex{}
+	}
+	lock := newPlanetLocks[id]
+
+	lock.Lock()
+	defer lock.Unlock()
 
 	dbUser, err := db.GetUser(id)
 	if err != nil {

@@ -163,6 +163,9 @@ func GetUser(id string) (User, error) {
 
 	err := db.Get(&user, "SELECT user_id, admin, coins FROM users WHERE user_id = ?", id)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return User{}, NotFoundError
+		}
 		return User{}, err
 	}
 

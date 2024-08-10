@@ -49,6 +49,8 @@ func setupRoutes(e *echo.Echo) {
 	r.DELETE("/planet/:hash", DeletePlanet).Name = "delete-planet"
 	r.POST("/planet/new", NewPlanet).Name = "create-planet"
 
+	a.GET("/user/:id", GetUser).Name = "get-user"
+
 	a.GET("/auth/login", Login).Name = "oauth-login"
 	a.GET("/auth/callback", Callback).Name = "oauth-callback"
 
