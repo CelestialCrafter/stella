@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -61,31 +62,23 @@ func Callback(c echo.Context) error {
 	state := c.QueryParam("state")
 
 	if err != nil || originalState.Value != state {
-		return c.JSON(http.StatusBadRequest, echo.Map{
-			"message": "Could not verify state",
-		})
+		return jsonError(c, http.StatusBadRequest, errors.New("Could not verify state"))
 	}
 	oauthToken, err := config.Exchange(context.Background(), c.QueryParam("code"))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{
-			"message": err.Error(),
-		})
+		return jsonError(c, http.StatusBadRequest, err)
 	}
 
 	client := config.Client(context.Background(), oauthToken)
 	res, err := client.Get("https://www.googleapis.com/oauth2/v1/userinfo")
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"message": err.Error(),
-		})
+		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
 	defer res.Body.Close()
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"message": err.Error(),
-		})
+		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
 	claims := &userClaims{
@@ -98,25 +91,19 @@ func Callback(c echo.Context) error {
 
 	err = json.Unmarshal(body, &claims)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"message": err.Error(),
-		})
+		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
 	// @TODO refresh token
 	claims.ID = fmt.Sprint("google-", claims.ID)
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(os.Getenv("JWT_SECRET")))
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"message": err.Error(),
-		})
+		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
 	err = db.CreateUser(claims.ID)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"message": err.Error(),
-		})
+		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{
