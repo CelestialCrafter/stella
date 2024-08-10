@@ -61,9 +61,16 @@ func CloseDB() {
 	}
 }
 
-func CheckHashExistance(hash string) bool {
+func CheckPlanetExistance(hash string) bool {
 	var exists bool
 	db.QueryRow("SELECT 1 FROM planets WHERE hash = ? LIMIT 1", hash).Scan(&exists)
+
+	return exists
+}
+
+func CehckUserExistance(id string) bool {
+	var exists bool
+	db.QueryRow("SELECT 1 FROM users WHERE id = ? LIMIT 1", id).Scan(&exists)
 
 	return exists
 }
@@ -83,11 +90,14 @@ func GetPlanetByHash(hash string) (*Planet, error) {
 	return &planet, nil
 }
 
-func CreatePlanet(hash string, features int) error {
-	_, err := db.Exec("INSERT INTO planets (hash, features) VALUES (?, ?)", hash, features)
-	if err != nil {
-		return err
-	}
+func CreatePlanet(hash string, features int, userId string) error {
+	_, err := db.Exec("INSERT INTO planets (hash, features, user_id) VALUES (?, ?, ?)", hash, features, userId)
 
-	return nil
+	return err
+}
+
+func CreateUser(id string) error {
+	_, err := db.Exec("INSERT INTO users (id) VALUES (?)", id)
+
+	return err
 }
