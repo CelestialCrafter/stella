@@ -50,7 +50,10 @@ export const initScene = canvas => {
 	animate();
 };
 
-const load = url => new Promise((res, rej) => loader.load(url, res, () => {}, rej));
+const load = url =>
+	new Promise((res, rej) => {
+		loader.load(url, res, () => {}, rej);
+	});
 export const addPlanets = async hashes => {
 	const planetObjects = (
 		await Promise.all(hashes.map(hash => `/models/${hash}.glb`).map(load))
@@ -60,7 +63,7 @@ export const addPlanets = async hashes => {
 	for (const [i, planet] of planetObjects.entries()) {
 		scene.add(planet);
 		planet.children[0].name = hashes[i];
-		const spaceVector = new THREE.Vector3(50, 0, 0);
+		const spaceVector = new THREE.Vector3(70, 0, 0);
 		planet.position.add(spaceVector.multiplyScalar(i));
 		totalBounding.expandByPoint(spaceVector);
 	}
