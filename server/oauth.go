@@ -12,6 +12,7 @@ import (
 
 	"github.com/CelestialCrafter/stella/common"
 	"github.com/CelestialCrafter/stella/db"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -27,8 +28,14 @@ var config = &oauth2.Config{
 	Endpoint:     google.Endpoint,
 }
 
-type User struct {
-	ID string
+type userClaims struct {
+	ID    string `json:"id"`
+	Admin bool   `json:"admin"`
+	jwt.RegisteredClaims
+}
+
+type user struct {
+	ID string `json:"id"`
 }
 
 func Login(c echo.Context) error {
@@ -58,14 +65,14 @@ func Callback(c echo.Context) error {
 			"message": "Could not verify state",
 		})
 	}
-	token, err := config.Exchange(context.Background(), c.QueryParam("code"))
+	oauthToken, err := config.Exchange(context.Background(), c.QueryParam("code"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": err.Error(),
 		})
 	}
 
-	client := config.Client(context.Background(), token)
+	client := config.Client(context.Background(), oauthToken)
 	res, err := client.Get("https://www.googleapis.com/oauth2/v1/userinfo")
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
@@ -81,17 +88,31 @@ func Callback(c echo.Context) error {
 		})
 	}
 
-	user := User{}
-	err = json.Unmarshal(body, &user)
+	claims := &userClaims{
+		"",
+		false,
+		jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24 * 3)),
+		},
+	}
+
+	err = json.Unmarshal(body, &claims)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": err.Error(),
 		})
 	}
 
-	user.ID = fmt.Sprint("google-", user.ID)
+	// @TODO refresh token
+	claims.ID = fmt.Sprint("google-", claims.ID)
+	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(os.Getenv("JWT_SECRET")))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": err.Error(),
+		})
+	}
 
-	err = db.CreateUser(user.ID)
+	err = db.CreateUser(claims.ID)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": err.Error(),
@@ -99,6 +120,6 @@ func Callback(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"data": user,
+		"token": token,
 	})
 }

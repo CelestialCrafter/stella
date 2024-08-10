@@ -74,7 +74,8 @@ func NewPlanet(features PlanetFeatures) Planet {
 }
 
 func ExtractFeaturesFromBin(featuresBin int) (*PlanetFeatures, error) {
-	featuresBinSlice := utils.SplitInt(featuresBin)
+	// featuresBinSlice := utils.SplitInt(featuresBin)
+	featuresBinSlice := []int{}
 
 	var planetType string
 	switch featuresBinSlice[0] {
