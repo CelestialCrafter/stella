@@ -157,3 +157,20 @@ func CreateUser(id string) (User, error) {
 
 	return user, nil
 }
+
+func GetUser(id string) (User, error) {
+	user := User{}
+
+	err := db.Get(&user, "SELECT user_id, admin, coins FROM users WHERE user_id = ?", id)
+	if err != nil {
+		return User{}, err
+	}
+
+	return user, nil
+}
+
+func UpdateUser(user User) error {
+	_, err := db.Exec("UPDATE users SET admin = ?, coins = ? WHERE user_id = ?", user.Admin, user.Coins, user.UserId)
+
+	return err
+}
