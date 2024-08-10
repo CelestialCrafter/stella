@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"errors"
 	"os"
 
 	"github.com/charmbracelet/log"
@@ -23,14 +24,14 @@ func InitDB() {
 	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
 		file, err := os.Create(dbPath)
 		if err != nil {
-			log.Fatal("Failed to create database file:", err)
+			log.Fatal("could not create database file", "error", err)
 		}
 		file.Close()
 	}
 
 	db, err = sql.Open("sqlite3", dbPath)
 	if err != nil {
-		log.Fatal("Failed to open database:", err)
+		log.Fatal("could not open database", "error", err)
 	}
 
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS planets (
@@ -40,7 +41,7 @@ func InitDB() {
 		FOREIGN KEY (user_id) REFERENCES users (id)
 	);`)
 	if err != nil {
-		log.Fatal("Failed to create table:", err)
+		log.Fatal("could not create planets table", "error", err)
 	}
 
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS users (
@@ -48,31 +49,10 @@ func InitDB() {
 		coins INTEGER NOT NULL DEFAULT 10
 	)`)
 	if err != nil {
-		log.Fatal("Failed to create users table:", err)
+		log.Fatal("could not create users table", "error", err)
 	}
 
-	log.Info("Database initialized successfully")
-}
-
-func CloseDB() {
-	if db != nil {
-		db.Close()
-		log.Info("Database connection closed")
-	}
-}
-
-func CheckPlanetExistance(hash string) bool {
-	var exists bool
-	db.QueryRow("SELECT 1 FROM planets WHERE hash = ? LIMIT 1", hash).Scan(&exists)
-
-	return exists
-}
-
-func CehckUserExistance(id string) bool {
-	var exists bool
-	db.QueryRow("SELECT 1 FROM users WHERE id = ? LIMIT 1", id).Scan(&exists)
-
-	return exists
+	log.Info("initialized database")
 }
 
 func GetPlanetByHash(hash string) (*Planet, error) {
@@ -81,10 +61,11 @@ func GetPlanetByHash(hash string) (*Planet, error) {
 	err := db.QueryRow("SELECT hash, features FROM planets WHERE hash = ?", hash).Scan(&planet.Hash, &planet.Features)
 
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil // No planet found with this hash
+		if errors.Is(err, sql.ErrNoRows) {
+			// No planet found with this hash
+			return nil, nil
 		}
-		return nil, err // An error occurred during the query
+		return nil, err
 	}
 
 	return &planet, nil
@@ -97,7 +78,7 @@ func CreatePlanet(hash string, features string, userId string) error {
 }
 
 func CreateUser(id string) error {
-	_, err := db.Exec("INSERT INTO users (id) VALUES (?)", id)
+	_, err := db.Exec("INSERT INTO users (id) VALUES (?) ON CONFLICT DO NOTHING", id)
 
 	return err
 }
