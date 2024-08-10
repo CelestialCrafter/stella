@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/CelestialCrafter/stella/common"
+	"github.com/CelestialCrafter/stella/db"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -87,7 +88,15 @@ func Callback(c echo.Context) error {
 			"message": err.Error(),
 		})
 	}
+
 	user.ID = fmt.Sprint("google-", user.ID)
+
+	err = db.CreateUser(user.ID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": err.Error(),
+		})
+	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"data": user,
