@@ -27,8 +27,8 @@ func GetPlanet(c echo.Context) error {
 }
 
 func NewPlanet(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(*userClaims)
+	token := c.Get("user").(*jwt.Token)
+	claims := token.Claims.(*userClaims)
 	id := claims.ID
 
 	_, ok := newPlanetLocks[id]
@@ -40,12 +40,12 @@ func NewPlanet(c echo.Context) error {
 	lock.Lock()
 	defer lock.Unlock()
 
-	dbUser, err := db.GetUser(id)
+	user, err := db.GetUser(id)
 	if err != nil {
 		return jsonError(c, http.StatusBadRequest, err)
 	}
 
-	if dbUser.Coins <= 0 {
+	if !user.Admin && user.Coins <= 0 {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "not enough coins"})
 	}
 
@@ -67,16 +67,19 @@ func NewPlanet(c echo.Context) error {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
-	dbUser.Coins -= 1
-	db.UpdateUser(dbUser)
+	user.Coins -= 1
+	err = db.UpdateUser(user)
+	if err != nil {
+		return jsonError(c, http.StatusInternalServerError, err)
+	}
 
 	return c.JSON(http.StatusOK, planet)
 }
 
 func DeletePlanet(c echo.Context) error {
 	hash := c.Param("hash")
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(*userClaims)
+	token := c.Get("user").(*jwt.Token)
+	claims := token.Claims.(*userClaims)
 	id := claims.ID
 
 	planet, err := db.RemovePlanet(hash, id)
@@ -98,8 +101,8 @@ func DeletePlanet(c echo.Context) error {
 
 func UpdatePlanet(c echo.Context) error {
 	hash := c.Param("hash")
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(*userClaims)
+	token := c.Get("user").(*jwt.Token)
+	claims := token.Claims.(*userClaims)
 	id := claims.ID
 
 	features := new(planets.PlanetFeatures)

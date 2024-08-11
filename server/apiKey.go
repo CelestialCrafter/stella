@@ -9,16 +9,16 @@ import (
 )
 
 func NewApiKey(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(*userClaims)
-
+	token := c.Get("user").(*jwt.Token)
+	claims := token.Claims.(*userClaims)
 	claims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(time.Hour * 24 * 365))
-	token, err := sign(claims)
+
+	newToken, err := sign(claims)
 	if err != nil {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{
-		"token": token,
+		"token": newToken,
 	})
 }
