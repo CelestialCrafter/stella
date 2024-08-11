@@ -7,7 +7,6 @@ import (
 	"path"
 	"sync"
 
-	"github.com/CelestialCrafter/stella/common"
 	"github.com/CelestialCrafter/stella/db"
 	"github.com/CelestialCrafter/stella/planets"
 	"github.com/golang-jwt/jwt/v5"
@@ -93,7 +92,7 @@ func DeletePlanet(c echo.Context) error {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
-	err = os.Remove(path.Join(common.BlenderPath, "models/", hash+".glb"))
+	err = os.Remove(path.Join(os.Getenv("BLENDER_DATA_PATH"), "models/", hash+".glb"))
 	if err != nil {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}

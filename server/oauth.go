@@ -21,15 +21,18 @@ import (
 
 const redirectUrl = "http://localhost:8000/auth/callback"
 
-var config = &oauth2.Config{
-	ClientID:     os.Getenv("GOOGLE_OAUTH_ID"),
-	ClientSecret: os.Getenv("GOOGLE_OAUTH_SECRET"),
-	Scopes:       []string{"openid", "email"},
-	RedirectURL:  redirectUrl,
-	Endpoint:     google.Endpoint,
+func computeConfig() *oauth2.Config {
+	return &oauth2.Config{
+		ClientID:     os.Getenv("GOOGLE_OAUTH_ID"),
+		ClientSecret: os.Getenv("GOOGLE_OAUTH_SECRET"),
+		Scopes:       []string{"openid", "email"},
+		RedirectURL:  redirectUrl,
+		Endpoint:     google.Endpoint,
+	}
 }
 
 func Login(c echo.Context) error {
+	config := computeConfig()
 	state := hex.EncodeToString(common.Hash())
 	url := config.AuthCodeURL(state)
 
@@ -47,6 +50,7 @@ func Login(c echo.Context) error {
 }
 
 func Callback(c echo.Context) error {
+	config := computeConfig()
 	originalState, err := c.Cookie("state")
 	state := c.QueryParam("state")
 

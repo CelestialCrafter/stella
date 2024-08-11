@@ -4,17 +4,16 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"os"
 	"os/exec"
 	"path"
 	"strings"
 	"time"
 
-	"github.com/CelestialCrafter/stella/common"
 	"github.com/charmbracelet/log"
 )
 
 const (
-	blenderExe          = "org.blender.Blender"
 	scriptErrorExitCode = 73
 	stellaPrefix        = "[stella]"
 )
@@ -28,11 +27,11 @@ func (p Planet) CreateModel() error {
 
 	// @PERF turn the blender script into a daemon so startup isnt required on every model creation
 	blenderCmd := exec.Command(
-		blenderExe,
+		os.Getenv("BLENDER_EXE"),
 		"--background",
 		"--python-use-system-env",
 		"--python-exit-code", fmt.Sprint(scriptErrorExitCode),
-		"--python", path.Join(common.BlenderPath, "app.py"),
+		"--python", path.Join(os.Getenv("BLENDER_DATA_PATH"), "app.py"),
 		"--", string(marshalled),
 	)
 

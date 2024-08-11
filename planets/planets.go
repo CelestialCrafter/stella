@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"math/rand"
+	"os"
 	"path"
 
 	"github.com/CelestialCrafter/stella/common"
@@ -68,7 +69,7 @@ func NewPlanet(features PlanetFeatures, newHash []byte) Planet {
 
 	return Planet{
 		Hash:      hex.EncodeToString(newHash),
-		Directory: path.Join(common.BlenderPath, "models/"),
+		Directory: path.Join(os.Getenv("BLENDER_DATA_PATH"), "models/"),
 		Features:  features,
 		Values:    values,
 	}

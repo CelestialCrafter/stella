@@ -7,8 +7,25 @@ import (
 	"os"
 	"path"
 	"reflect"
+	"runtime"
 	"testing"
+
+	"github.com/joho/godotenv"
 )
+
+func init() {
+	_, filename, _, _ := runtime.Caller(0)
+	dir := path.Join(path.Dir(filename), "..")
+	err := os.Chdir(dir)
+	if err != nil {
+		panic(err)
+	}
+
+	err = godotenv.Load()
+	if err != nil {
+		panic(err)
+	}
+}
 
 func TestPlanet(t *testing.T) {
 	features := PlanetFeatures{

@@ -16,11 +16,15 @@ scene.add(light);
 
 export const selectedPlanet = () => {
 	const intersects = raycaster.intersectObjects(Object.values(scene.children));
+	const searchObject = object => {
+		if (object.type === 'Group' && object.userData.name === 'Planet') return object;
+		return searchObject(object.parent);
+	};
 
 	if (intersects.length > 0)
 		for (const intersect of intersects) {
-			if (intersect.object.userData.name != 'Planet') continue;
-			return intersect.object.name;
+			const found = searchObject(intersect.object);
+			if (found != null) return found;
 		}
 
 	return null;
