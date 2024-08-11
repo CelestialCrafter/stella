@@ -5,13 +5,8 @@ import (
 	"encoding/hex"
 	"math/rand"
 	"os"
-	"path"
 
 	"github.com/CelestialCrafter/stella/common"
-)
-
-const (
-	modelPath = "models/"
 )
 
 var cwd = func() string {
@@ -82,7 +77,7 @@ func NewPlanet(features PlanetFeatures, newHash []byte) Planet {
 
 	return Planet{
 		Hash:      hex.EncodeToString(newHash),
-		Directory: path.Join(cwd, modelPath),
+		Directory: common.ModelPath,
 		Features:  features,
 		Values:    values,
 	}
