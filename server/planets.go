@@ -93,7 +93,7 @@ func DeletePlanet(c echo.Context) error {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
-	err = os.Remove(path.Join(common.ModelPath, hash+".glb"))
+	err = os.Remove(path.Join(common.BlenderPath, "models/", hash+".glb"))
 	if err != nil {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}

@@ -4,19 +4,10 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"math/rand"
-	"os"
+	"path"
 
 	"github.com/CelestialCrafter/stella/common"
 )
-
-var cwd = func() string {
-	cwd, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-
-	return cwd
-}()
 
 type PlanetFeatures struct {
 	Type        string `json:"type" validate:"required"`
@@ -77,7 +68,7 @@ func NewPlanet(features PlanetFeatures, newHash []byte) Planet {
 
 	return Planet{
 		Hash:      hex.EncodeToString(newHash),
-		Directory: common.ModelPath,
+		Directory: path.Join(common.BlenderPath, "models/"),
 		Features:  features,
 		Values:    values,
 	}

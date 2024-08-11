@@ -15,7 +15,7 @@
 
 		const token = jose.decodeJwt(localStorage.getItem('token'));
 		const response = await fetch(`/api/user/${token.id}`);
-		if (response.status === 404) return login();
+		if (!response.ok) return login();
 		const user = await response.json();
 		planets = user.planets.reduce((acc, x) => ({ ...acc, [x.hash]: x }), {});
 	});

@@ -6,10 +6,10 @@ import sys
 import bpy
 
 stella_prefix = "[stella]"
-
+base_dir = os.path.dirname(os.path.realpath(__file__))
 args = sys.argv[sys.argv.index("--") + 1:]
-if len(args) < 2:
-    raise Exception("no base file or planet supplied")
+if len(args) < 1:
+    raise Exception("no planet supplied")
 
 
 def normalize_color(color):
@@ -70,10 +70,6 @@ def apply_neutron_rod():
     bpy.data.objects['NeutronRod'].hide_set(False)
 
 
-def export(name):
-    bpy.ops.export_scene.gltf(filepath=name, use_selection=True)
-
-
 def generate_planet(planet):
     set_selection("Planet")
     values = planet["values"]
@@ -100,8 +96,9 @@ def generate_planet(planet):
     selected.name = 'Planet'
     selected.data.name = 'Planet'
 
-    export(os.path.join(planet["directory"], planet["hash"] + ".glb"))
+    path = os.path.join(base_dir, "models/", planet["hash"] + ".glb")
+    bpy.ops.export_scene.gltf(filepath=path, use_selection=True)
 
 
-bpy.ops.wm.open_mainfile(filepath=args[0])
-generate_planet(json.loads(args[1]))
+bpy.ops.wm.open_mainfile(filepath=os.path.join(base_dir, "base.blend"))
+generate_planet(json.loads(args[0]))

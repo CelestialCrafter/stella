@@ -26,6 +26,7 @@ func svelte(e *echo.Echo) {
 			HTML5: true,
 			Root:  "server/web/dist/",
 		}))
+		e.Static("/public", "server/web/dist/")
 	}
 }
 
@@ -37,7 +38,7 @@ func setupRoutes(e *echo.Echo) {
 		Level: 6,
 	}))
 
-	m.Static("/", "models")
+	m.Static("/", "blender/models")
 
 	a := e.Group("/api")
 	r := a.Group("")
