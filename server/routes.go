@@ -1,12 +1,9 @@
 package server
 
 import (
-	"fmt"
 	"net/http"
 	"net/url"
-	"strings"
 
-	"github.com/charmbracelet/log"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
