@@ -6,10 +6,9 @@
 	{@const { features, values } = planet}
 	<section class="selected-planet">
 		<span>Type: {features.type}</span><br />
-		<span>Neutron Star: {features.star_neutron ? 'yes' : 'no'}</span><br />
-		<span>Rings: {features.normal_rings ? 'yes' : 'no'}</span><br />
 
 		{#if features.type === 'normal'}
+			<span>Rings: {features.normal_rings ? 'yes' : 'no'}</span><br />
 			<span>Size: {values.normal_size}</span><br />
 			<span>Color: rgb {values.normal_color.join(', ')}</span><br />
 			{#if features.normal_rings}
@@ -18,12 +17,21 @@
 				<span>Ring Color: rgb {values.normal_ring_colors.join(', ')}</span><br />
 				<span>Ring Rotation: xyz {values.normal_ring_rotation.join(', ')}</span><br />
 			{/if}
-		{:else}
+		{:else if features.type === 'star'}
+			<span>Neutron Star: {features.star_neutron ? 'yes' : 'no'}</span><br />
 			<span>Brightness: {values.star_brightness}</span><br />
 			<span>Size: {values.star_size}</span><br />
 			{#if features.star_neutron}
 				<span>Color: rgb {values.star_neutron_color.join(', ')}</span><br />
 			{/if}
+		{:else if features.type === 'blackhole'}
+			<span>
+				Blackhole Style: {['vertical', 'horizontal'].includes(features.blackhole_style)
+					? features.blackhole_style
+					: 'other'}
+			</span><br />
+			<span>Blackhole Ring Color 1: rgb {values.blackhole_colors[0].join(', ')}</span><br />
+			<span>Blackhole Ring Color 2: rgb {values.blackhole_colors[1].join(', ')}</span><br />
 		{/if}
 	</section>
 {/if}
