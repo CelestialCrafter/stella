@@ -101,20 +101,20 @@ func DeletePlanet(c echo.Context) error {
 	return c.JSON(http.StatusOK, planet)
 }
 
-// func UpdatePlanet(c echo.Context) error {
-// 	hash := c.Param("hash")
-// 	token := c.Get("user").(*jwt.Token)
-// 	claims := token.Claims.(*userClaims)
-// 	id := claims.ID
-//
-// 	err = db.UpdatePlanet(hash, planet.Hash, features, id)
-// 	if err != nil {
-// 		if errors.Is(err, db.NotFoundError) {
-// 			return jsonError(c, http.StatusNotFound, err)
-// 		}
-//
-// 		return jsonError(c, http.StatusInternalServerError, err)
-// 	}
-//
-// 	return c.JSON(http.StatusOK, planet)
-// }
+func ChangePlanetOwner(c echo.Context) error {
+	hash := c.Param("hash")
+	token := c.Get("user").(*jwt.Token)
+	claims := token.Claims.(*userClaims)
+	id := claims.ID
+
+	planet, err := db.UpdatePlanet(hash, id)
+	if err != nil {
+		if errors.Is(err, db.NotFoundError) {
+			return jsonError(c, http.StatusNotFound, err)
+		}
+
+		return jsonError(c, http.StatusInternalServerError, err)
+	}
+
+	return c.JSON(http.StatusOK, planet)
+}

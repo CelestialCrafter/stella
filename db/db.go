@@ -179,13 +179,11 @@ func UpdateUser(user User) error {
 	return err
 }
 
-func UpdatePlanet(oldHash string, newHash string, features *planets.PlanetFeatures, userId string) error {
-	featuresBytes, err := json.Marshal(features)
+func UpdatePlanet(hash string, userId string) (planets.Planet, error) {
+	_, err := db.Exec("UPDATE planets SET owner_id = ? WHERE hash = ?", userId, hash)
 	if err != nil {
-		return err
+		return planets.Planet{}, err
 	}
 
-	_, err = db.Exec("UPDATE planets SET hash = ?, features = ?, owner_id = ? WHERE hash = ?", newHash, string(featuresBytes), userId, oldHash)
-
-	return err
+	return GetPlanet(hash)
 }
