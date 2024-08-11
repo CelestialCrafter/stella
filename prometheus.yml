@@ -1,0 +1,9 @@
+scrape_configs:
+  - job_name:       'stella'
+
+    scrape_interval: 5s
+
+    static_configs:
+      - targets: ['localhost:8000']
+        labels:
+          group: 'stella-backend'

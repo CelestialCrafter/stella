@@ -4,8 +4,10 @@ import (
 	"time"
 
 	"github.com/charmbracelet/log"
+	echoPrometheus "github.com/globocom/echo-prometheus"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 const (
@@ -31,6 +33,9 @@ func getRequestId(c echo.Context) string {
 func SetupServer() {
 	e := echo.New()
 	e.HideBanner = true
+
+	e.Use(echoPrometheus.MetricsMiddleware())
+	e.GET("/metrics", echo.WrapHandler(promhttp.Handler()))
 
 	e.Use(middleware.RequestID())
 	logging(e)
