@@ -1,6 +1,9 @@
 package server
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/charmbracelet/log"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -47,4 +50,17 @@ func logPanicRecover(c echo.Context, err error, stack []byte) error {
 		"stack", string(stack),
 	)
 	return err
+}
+
+func logRoutes(e *echo.Echo) {
+	echoRoutes := e.Routes()
+	routes := make([]interface{}, 0)
+	for _, route := range echoRoutes {
+		if route.Method == "echo_route_not_found" || strings.Contains(route.Name, "StaticDirectoryHandler") {
+			continue
+		}
+
+		routes = append(routes, route.Name, fmt.Sprintf("%s %s", route.Method, route.Path))
+	}
+	log.Info("registered routes", routes...)
 }
