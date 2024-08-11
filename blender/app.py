@@ -49,13 +49,6 @@ def apply_rings(amount, colors, rotations, size, planet_size):
                                math.radians(rotation[1]),
                                math.radians(rotation[2]))
 
-    bpy.ops.object.select_all(action='DESELECT')
-    for i in range(amount):
-        bpy.data.objects[f'Ring{i}'].select_set(True)
-    bpy.data.objects['Planet'].select_set(True)
-    bpy.ops.object.join()
-    get_selection().data.name = 'Planet'
-
 
 def apply_emission_strength(strength):
     material = get_selection().active_material
@@ -71,6 +64,10 @@ def apply_emission_color(color):
 
     bsdf = nodes['Principled BSDF']
     bsdf.inputs['Emission Color'].default_value = normalize_color(color)
+
+
+def apply_neutron_rod():
+    bpy.data.objects['NeutronRod'].hide_set(False)
 
 
 def export(name):
@@ -95,6 +92,14 @@ def generate_planet(planet):
             apply_emission_strength(values["star_brightness"])
             if features["star_neutron"]:
                 apply_emission_color(values["star_neutron_color"])
+                apply_neutron_rod()
+
+    bpy.ops.object.select_all(action='SELECT')
+    bpy.ops.object.join()
+    selected = get_selection()
+    selected.name = 'Planet'
+    selected.data.name = 'Planet'
+
     export(os.path.join(planet["directory"], planet["hash"] + ".glb"))
 
 

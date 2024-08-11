@@ -8,11 +8,15 @@
 
 	$: planets = {};
 	$: selected = null;
+
+	const login = () => window.location.assign('/auth/login');
 	onMount(async () => {
-		if (!window.localStorage.getItem('token')) return window.location.assign('/auth/login');
+		if (!window.localStorage.getItem('token')) return login();
 
 		const token = jose.decodeJwt(localStorage.getItem('token'));
-		const user = await (await fetch(`/api/user/${token.id}`)).json();
+		const response = await fetch(`/api/user/${token.id}`);
+		if (response.status === 404) return login();
+		const user = await response.json();
 		planets = user.planets.reduce((acc, x) => ({ ...acc, [x.hash]: x }), {});
 	});
 </script>
