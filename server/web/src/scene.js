@@ -21,11 +21,10 @@ export const selectedPlanet = () => {
 		return searchObject(object.parent);
 	};
 
-	if (intersects.length > 0)
-		for (const intersect of intersects) {
-			const found = searchObject(intersect.object);
-			if (found != null) return found;
-		}
+	for (const intersect of intersects) {
+		const found = searchObject(intersect.object);
+		if (found != null) return found;
+	}
 
 	return null;
 };

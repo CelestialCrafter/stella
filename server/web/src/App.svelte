@@ -30,7 +30,7 @@
 	{:else}
 		<SelectedPlanet planet={selected ? planets[selected] : null} />
 		<Scene
-			handleCanvasClick={() => (selected = selectedPlanet())}
+			handleCanvasClick={() => (selected = selectedPlanet()?.name)}
 			planets={Object.values(planets)}
 		/>
 	{/if}
