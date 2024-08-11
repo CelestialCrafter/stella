@@ -104,9 +104,14 @@ func ChangePlanetOwner(c echo.Context) error {
 	hash := c.Param("hash")
 	token := c.Get("user").(*jwt.Token)
 	claims := token.Claims.(*userClaims)
-	id := claims.ID
+	source := claims.ID
 
-	planet, err := db.UpdatePlanet(hash, id)
+	destination := c.Request().Header.Get("destination")
+	if destination == "" {
+		return c.JSON(http.StatusBadRequest, echo.Map{"message": "no destination adress was provided"})
+	}
+
+	planet, err := db.UpdatePlanet(hash, destination, source)
 	if err != nil {
 		if errors.Is(err, db.NotFoundError) {
 			return jsonError(c, http.StatusNotFound, err)

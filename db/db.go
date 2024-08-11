@@ -179,8 +179,8 @@ func UpdateUser(user User) error {
 	return err
 }
 
-func UpdatePlanet(hash string, userId string) (planets.Planet, error) {
-	_, err := db.Exec("UPDATE planets SET owner_id = ? WHERE hash = ?", userId, hash)
+func UpdatePlanet(hash string, destination string, source string) (planets.Planet, error) {
+	_, err := db.Exec("UPDATE planets SET owner_id = ? WHERE hash = ? AND owner_id = ?", destination, hash, source)
 	if err != nil {
 		return planets.Planet{}, err
 	}
