@@ -5,9 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path"
-	"strings"
 	"sync"
-	"unicode"
 
 	"github.com/CelestialCrafter/stella/db"
 	"github.com/CelestialCrafter/stella/planets"
@@ -84,12 +82,6 @@ func DeletePlanet(c echo.Context) error {
 	token := c.Get("user").(*jwt.Token)
 	claims := token.Claims.(*userClaims)
 	id := claims.ID
-
-	for _, r := range hash {
-		if !unicode.IsLetter(r) {
-			return jsonError(c, http.StatusBadRequest, errors.New("invalid hash"))
-		}
-	}
 
 	planet, err := db.RemovePlanet(hash, id)
 	if err != nil {
