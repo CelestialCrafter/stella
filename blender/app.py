@@ -83,7 +83,7 @@ def apply_blackhole_colors(ring_style, colors):
 
     # ring
     normalized = [normalize_color(color) for color in colors]
-    size = (256, 256)
+    size = (8, 8)
     image = bpy.data.images.new("BlackHoleRingImage", size[1], size[0])
     pixels = [None] * size[0] * size[1]
 
