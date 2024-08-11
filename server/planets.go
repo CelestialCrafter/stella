@@ -47,7 +47,7 @@ func NewPlanet(c echo.Context) error {
 	}
 
 	if !user.Admin && user.Coins <= 0 {
-		return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "not enough coins"})
+		return jsonError(c, http.StatusBadRequest, errors.New("not enough coins"))
 	}
 
 	// @TODO restrict features to random/modifiers (once demo over)
@@ -100,18 +100,23 @@ func DeletePlanet(c echo.Context) error {
 	return c.JSON(http.StatusOK, planet)
 }
 
-func ChangePlanetOwner(c echo.Context) error {
+type destination struct {
+	id string
+}
+
+func GivePlanet(c echo.Context) error {
 	hash := c.Param("hash")
 	token := c.Get("user").(*jwt.Token)
 	claims := token.Claims.(*userClaims)
 	source := claims.ID
 
-	destination := c.Request().Header.Get("destination")
-	if destination == "" {
-		return c.JSON(http.StatusBadRequest, echo.Map{"message": "no destination adress was provided"})
+	destination := new(destination)
+	err := c.Bind(destination)
+	if err != nil {
+		return jsonError(c, http.StatusBadRequest, err)
 	}
 
-	planet, err := db.UpdatePlanet(hash, destination, source)
+	planet, err := db.UpdatePlanet(hash, destination.id, source)
 	if err != nil {
 		if errors.Is(err, db.NotFoundError) {
 			return jsonError(c, http.StatusNotFound, err)
