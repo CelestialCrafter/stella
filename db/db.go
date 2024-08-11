@@ -16,9 +16,10 @@ import (
 const dbPath = "stella.db"
 
 type User struct {
-	UserId string `json:"id" db:"user_id"`
-	Admin  bool   `json:"admin" db:"admin"`
-	Coins  uint   `json:"coins" db:"coins"`
+	UserId  string           `json:"id" db:"user_id"`
+	Admin   bool             `json:"admin" db:"admin"`
+	Coins   uint             `json:"coins" db:"coins"`
+	Planets []planets.Planet `json:"planets"`
 }
 
 type dbPlanet struct {

@@ -12,8 +12,8 @@
 		if (!window.localStorage.getItem('token')) return window.location.assign('/auth/login');
 
 		const token = jose.decodeJwt(localStorage.getItem('token'));
-		const planetsArray = await (await fetch(`/api/planets/${token.id}`)).json();
-		planets = planetsArray.reduce((acc, x) => ({ ...acc, [x.hash]: x }), {});
+		const user = await (await fetch(`/api/user/${token.id}`)).json();
+		planets = user.planets.reduce((acc, x) => ({ ...acc, [x.hash]: x }), {});
 	});
 </script>
 

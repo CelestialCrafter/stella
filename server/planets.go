@@ -26,15 +26,6 @@ func GetPlanet(c echo.Context) error {
 	return c.JSON(http.StatusOK, planet)
 }
 
-func GetAllPlanets(c echo.Context) error {
-	planets, err := db.GetPlanets(c.Param("id"))
-	if err != nil {
-		return jsonError(c, http.StatusInternalServerError, err)
-	}
-
-	return c.JSON(http.StatusOK, planets)
-}
-
 func NewPlanet(c echo.Context) error {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(*userClaims)

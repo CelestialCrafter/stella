@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { HDRCubeTextureLoader } from 'three/addons/loaders/HDRCubeTextureLoader.js';
 const FOV = 70;
 
 const scene = new THREE.Scene();
@@ -12,7 +11,7 @@ const loader = new GLTFLoader();
 let renderer;
 let controls;
 
-const light = new THREE.AmbientLight(0x404040, 50);
+const light = new THREE.AmbientLight(0x404040, 70);
 scene.add(light);
 
 export const selectedPlanet = () => {
