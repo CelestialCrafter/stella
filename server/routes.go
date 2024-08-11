@@ -57,14 +57,5 @@ func setupRoutes(e *echo.Echo) {
 	e.GET("/auth/login", Login).Name = "oauth-login"
 	e.GET("/auth/callback", Callback).Name = "oauth-callback"
 
-	echoRoutes := e.Routes()
-	routes := make([]interface{}, 0)
-	for _, route := range echoRoutes {
-		if route.Method == "echo_route_not_found" || strings.Contains(route.Name, "StaticDirectoryHandler") {
-			continue
-		}
-
-		routes = append(routes, route.Name, fmt.Sprintf("%s %s", route.Method, route.Path))
-	}
-	log.Info("registered routes", routes...)
+	logRoutes(e)
 }
