@@ -45,7 +45,7 @@ func setupRoutes(e *echo.Echo) {
 	r.Use(jwtMiddleware())
 
 	a.GET("/planet/:hash", GetPlanet).Name = "get-planet"
-	a.PUT("/planet/:hash", ChangePlanetOwner).Name = "update-planet"
+	r.PUT("/planet/:hash", ChangePlanetOwner).Name = "update-planet"
 	r.DELETE("/planet/:hash", DeletePlanet).Name = "delete-planet"
 	r.POST("/planet/new", NewPlanet).Name = "create-planet"
 
