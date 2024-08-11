@@ -13,7 +13,7 @@ if len(args) < 1:
 
 
 def normalize_color(color):
-    return (color[0] / 255, color[1] / 255, color[2] / 255, 1)
+    return (color[0] / 255, color[1] / 255, color[2] / 255, 1.0)
 
 
 def set_selection(name):
@@ -70,6 +70,41 @@ def apply_neutron_rod():
     bpy.data.objects['NeutronRod'].hide_set(False)
 
 
+def apply_blackhole_colors(ring_style, colors):
+    # sphere
+    blackhole = bpy.data.objects['BlackHole']
+    blackhole.hide_set(False)
+
+    material = blackhole.active_material
+    nodes = material.node_tree.nodes
+
+    bsdf = nodes['Principled BSDF']
+    bsdf.inputs['Base Color'].default_value = normalize_color(colors[2])
+
+    # ring
+    normalized = [normalize_color(color) for color in colors]
+    size = (256, 256)
+    image = bpy.data.images.new("BlackHoleRingImage", size[1], size[0])
+    pixels = [None] * size[0] * size[1]
+
+    for x in range(size[0]):
+        for y in range(size[1]):
+            selected_color = normalized[0]
+            if ring_style == "vertical" and y > size[1] / 2:
+                selected_color = normalized[1]
+            elif ring_style == "horizontal" and x > size[0] / 2:
+                selected_color = normalized[1]
+            pixels[(y * size[0]) + x] = selected_color
+
+    pixels = [chan for px in pixels for chan in px]
+    image.pixels = pixels
+
+    blackhole_ring = bpy.data.objects['BlackHoleRing']
+    blackhole_ring.hide_set(False)
+    blackhole_ring.active_material.node_tree.nodes[
+        'Image Texture'].image = image
+
+
 def generate_planet(planet):
     set_selection("Planet")
     values = planet["values"]
@@ -89,6 +124,11 @@ def generate_planet(planet):
             if features["star_neutron"]:
                 apply_emission_color(values["star_neutron_color"])
                 apply_neutron_rod()
+        case "blackhole":
+            apply_color(values["normal_color"])
+            apply_size(values["blackhole_size"])
+            apply_blackhole_colors(features["blackhole_style"],
+                                   values["blackhole_colors"])
 
     bpy.ops.object.select_all(action='SELECT')
     bpy.ops.object.join()
@@ -97,7 +137,9 @@ def generate_planet(planet):
     selected.data.name = 'Planet'
 
     path = os.path.join(base_dir, "models/", planet["hash"] + ".glb")
-    bpy.ops.export_scene.gltf(filepath=path, use_selection=True)
+    bpy.ops.export_scene.gltf(filepath=path,
+                              use_selection=True,
+                              export_apply=True)
 
 
 bpy.ops.wm.open_mainfile(filepath=os.path.join(base_dir, "base.blend"))

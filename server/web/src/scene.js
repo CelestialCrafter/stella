@@ -82,7 +82,7 @@ export const addPlanets = async hashes => {
 	for (const [i, planet] of planetObjects.entries()) {
 		scene.add(planet);
 		planet.children[0].name = hashes[i];
-		const spaceVector = new THREE.Vector3(70, 0, 0);
+		const spaceVector = new THREE.Vector3(100, 0, 0);
 		planet.position.add(spaceVector.multiplyScalar(i));
 		totalBounding.expandByPoint(spaceVector);
 	}
