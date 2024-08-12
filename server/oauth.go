@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"database/sql"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -93,9 +94,16 @@ func Callback(c echo.Context) error {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
-	_, err = db.CreateUser(claims.ID)
+	_, err = db.GetUser(claims.ID)
 	if err != nil {
-		return jsonError(c, http.StatusInternalServerError, err)
+		if !errors.Is(err, sql.ErrNoRows) {
+			return err
+		}
+
+		_, err = db.CreateUser(claims.ID)
+		if err != nil {
+			return jsonError(c, http.StatusInternalServerError, err)
+		}
 	}
 
 	return c.HTML(http.StatusOK, fmt.Sprintf(`

@@ -106,10 +106,10 @@ func DeletePlanet(c echo.Context) error {
 }
 
 type destination struct {
-	id string
+	Id string `json:"id"`
 }
 
-func GivePlanet(c echo.Context) error {
+func TransferPlanet(c echo.Context) error {
 	hash := c.Param("hash")
 	token := c.Get("user").(*jwt.Token)
 	claims := token.Claims.(*userClaims)
@@ -121,7 +121,7 @@ func GivePlanet(c echo.Context) error {
 		return jsonError(c, http.StatusBadRequest, err)
 	}
 
-	planet, err := db.TransferPlanet(hash, destination.id, source)
+	planet, err := db.TransferPlanet(hash, destination.Id, source)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return jsonError(c, http.StatusNotFound, errors.New("planet not found"))

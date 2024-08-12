@@ -142,7 +142,7 @@ func RemovePlanet(hash string, owner string) (planets.Planet, error) {
 
 func CreateUser(id string) (User, error) {
 	user := User{}
-	err := db.Get(&user, "INSERT INTO users (user_id) VALUES (?) ON CONFLICT DO NOTHING RETURNING *", id)
+	err := db.Get(&user, "INSERT INTO users (user_id) VALUES (?) RETURNING *", id)
 	if err != nil {
 		return User{}, err
 	}
