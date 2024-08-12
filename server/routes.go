@@ -39,6 +39,9 @@ func setupRoutes(e *echo.Echo) {
 	}))
 
 	m.Static("/", "blender/models")
+	e.GET("/", func(c echo.Context) error {
+		return c.Redirect(http.StatusSeeOther, "/app")
+	})
 
 	a := e.Group("/api")
 	r := a.Group("")
