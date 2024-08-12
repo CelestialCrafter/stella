@@ -25,7 +25,7 @@
 				<span>Color: rgb {values.star_neutron_color.join(', ')}</span><br />
 			{/if}
 		{:else if features.type === 'blackhole'}
-			<span>Size: {values.normal_size}</span>
+			<span>Size: {values.normal_size}</span><br />
 			<span>
 				Blackhole Style: {features.blackhole_style === 'vertical' ? 'vertical' : 'horizontal'}
 			</span><br />

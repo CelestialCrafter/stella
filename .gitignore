@@ -29,4 +29,5 @@ go.work.sum
 
 bruno/
 *.glb
+*.blend[0-9]
 !planets/test.glb

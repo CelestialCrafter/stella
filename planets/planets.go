@@ -53,7 +53,7 @@ func NewPlanet(features PlanetFeatures, newHash []byte) Planet {
 	frange := frangeWrapper(r)
 
 	values := PlanetValues{
-		NormalSize:  frange(10, 20),
+		NormalSize:  frange(1, 5),
 		NormalColor: [3]float32{frange(0, 255), frange(0, 255), frange(0, 255)},
 		NormalRingRotation: [][3]float32{
 			{frange(0, 360), frange(0, 360), frange(0, 360)},
@@ -63,15 +63,15 @@ func NewPlanet(features PlanetFeatures, newHash []byte) Planet {
 			{frange(0, 255), frange(0, 255), frange(0, 255)},
 			{frange(0, 255), frange(0, 255), frange(0, 255)},
 		},
-		NormalRingSize:   frange(5, 10),
+		NormalRingSize:   frange(1, 2),
 		NormalRingAmount: r.Intn(2) + 1,
-		BlackHoleSize:    frange(5, 30),
+		BlackHoleSize:    frange(1, 10),
 		BlackHoleColors: [3][3]float32{
 			{frange(0, 255), frange(0, 255), frange(0, 255)},
 			{frange(0, 255), frange(0, 255), frange(0, 255)},
 			{frange(0, 255), frange(0, 255), frange(0, 255)},
 		},
-		StarSize:         frange(20, 30),
+		StarSize:         frange(5, 10),
 		StarBrightness:   frange(0, 5),
 		StarNeutronColor: [3]float32{frange(15, 30), frange(20, 40), frange(150, 255)},
 	}

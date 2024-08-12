@@ -54,7 +54,7 @@ export const initScene = canvas => {
 	controls = new OrbitControls(camera, renderer.domElement);
 	controls.autoRotate = true;
 	controls.maxDistance = controls.getDistance();
-	controls.minDistance = controls.getDistance() / 5;
+	controls.minDistance = controls.getDistance() / 10;
 	controls.enablePan = false;
 	controls.update();
 
@@ -81,7 +81,7 @@ export const addPlanets = async hashes => {
 	for (const [i, planet] of planetObjects.entries()) {
 		scene.add(planet);
 		planet.children[0].name = hashes[i];
-		const spaceVector = new THREE.Vector3(100, 0, 0);
+		const spaceVector = new THREE.Vector3(20, 0, 0);
 		planet.position.add(spaceVector.multiplyScalar(i));
 		totalBounding.expandByPoint(spaceVector);
 	}

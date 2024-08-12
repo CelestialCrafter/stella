@@ -36,13 +36,13 @@ def apply_color(color):
     bsdf.inputs['Base Color'].default_value = normalize_color(color)
 
 
-def apply_rings(amount, colors, rotations, size, planet_size):
+def apply_rings(amount, colors, rotations, size):
     for i in range(amount):
         set_selection(f'Ring{i}')
         ring = get_selection()
         ring.hide_set(False)
         apply_color(colors[i])
-        apply_size(planet_size + size)
+        apply_size(size)
         rotation = rotations[i]
         ring.rotation_mode = 'XYZ'
         ring.rotation_euler = (math.radians(rotation[0]),
@@ -120,7 +120,7 @@ def generate_planet(planet):
                 apply_rings(values["normal_ring_amount"],
                             values["normal_ring_colors"],
                             values["normal_ring_rotation"],
-                            values["normal_ring_size"], values["normal_size"])
+                            values["normal_ring_size"])
         case "star":
             apply_size(values["star_size"])
             apply_emission_strength(values["star_brightness"])
