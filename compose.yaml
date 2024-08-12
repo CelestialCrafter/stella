@@ -1,0 +1,17 @@
+---
+include:
+  - metrics/compose.yaml
+services:
+  stella:
+    build: .
+    hostname: stella
+    ports:
+      - 8000:80
+    volumes:
+      - ./.env:/app/.env
+      - ./stella.db:/app/stella.db
+    networks:
+      - metrics
+      - stella
+networks:
+  stella:

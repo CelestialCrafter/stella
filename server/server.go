@@ -1,6 +1,7 @@
 package server
 
 import (
+	"os"
 	"time"
 
 	"github.com/charmbracelet/log"
@@ -51,7 +52,13 @@ func SetupServer() {
 
 	setupRoutes(e)
 
-	err := e.Start(bindAddress)
+	finalBindAddress := bindAddress
+	envBindAddress := os.Getenv("ADDRESS")
+	if envBindAddress != "" {
+		finalBindAddress = envBindAddress
+
+	}
+	err := e.Start(finalBindAddress)
 	if err != nil {
 		log.Fatal("error starting server", "error", err)
 	}

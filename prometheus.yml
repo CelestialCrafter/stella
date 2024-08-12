@@ -1,9 +1,10 @@
+---
 scrape_configs:
-  - job_name:       'stella'
+  - job_name: "stella"
 
     scrape_interval: 5s
 
     static_configs:
-      - targets: ['localhost:8000']
+      - targets: ["stella"]
         labels:
-          group: 'stella-backend'
+          group: "stella-backend"
