@@ -65,7 +65,7 @@ func NewPlanet(c echo.Context) error {
 	}
 
 	// @FIX put create planet and update user into a tx
-	_, err = db.CreatePlanet(planet.Hash, *features, id)
+	planet, err = db.CreatePlanet(planet.Hash, *features, id)
 	if err != nil {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}

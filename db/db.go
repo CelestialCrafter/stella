@@ -80,7 +80,10 @@ func dbPlanetToPlanet(dbPlanet dbPlanet) (planets.Planet, error) {
 		return planets.Planet{}, err
 	}
 
-	return planets.NewPlanet(features, decodedHash), nil
+	planet := planets.NewPlanet(features, decodedHash)
+	planet.Directory = ""
+
+	return planet, nil
 }
 
 func GetPlanet(hash string) (planets.Planet, error) {
