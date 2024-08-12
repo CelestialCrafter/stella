@@ -64,14 +64,18 @@ func NewPlanet(c echo.Context) error {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
-	err = db.CreatePlanet(planet.Hash, *features, id)
+	// @FIX put create planet and update user into a tx
+	_, err = db.CreatePlanet(planet.Hash, *features, id)
 	if err != nil {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
 	user.Coins -= 1
-	err = db.UpdateUser(user)
+	_, err = db.UpdateUser(user)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return jsonError(c, http.StatusNotFound, errors.New("user not found"))
+		}
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
@@ -117,7 +121,7 @@ func GivePlanet(c echo.Context) error {
 		return jsonError(c, http.StatusBadRequest, err)
 	}
 
-	planet, err := db.UpdatePlanet(hash, destination.id, source)
+	planet, err := db.TransferPlanet(hash, destination.id, source)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return jsonError(c, http.StatusNotFound, errors.New("planet not found"))

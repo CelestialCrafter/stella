@@ -24,6 +24,7 @@ type User struct {
 type dbPlanet struct {
 	Hash     string `db:"hash"`
 	Features string `db:"features"`
+	OwnerId  string `db:"owner_id"`
 }
 
 var db *sqlx.DB
@@ -84,7 +85,7 @@ func dbPlanetToPlanet(dbPlanet dbPlanet) (planets.Planet, error) {
 
 func GetPlanet(hash string) (planets.Planet, error) {
 	var dbPlanet dbPlanet
-	err := db.Get(&dbPlanet, "SELECT hash, features FROM planets WHERE hash = ?", hash)
+	err := db.Get(&dbPlanet, "SELECT * FROM planets WHERE hash = ?", hash)
 	if err != nil {
 		return planets.Planet{}, err
 	}
@@ -92,10 +93,10 @@ func GetPlanet(hash string) (planets.Planet, error) {
 	return dbPlanetToPlanet(dbPlanet)
 }
 
-func GetPlanets(userId string) ([]planets.Planet, error) {
+func GetPlanets(owner string) ([]planets.Planet, error) {
 	var dbPlanets []dbPlanet
 
-	err := db.Select(&dbPlanets, "SELECT hash, features FROM planets WHERE owner_id = ?", userId)
+	err := db.Select(&dbPlanets, "SELECT * FROM planets WHERE owner_id = ?", owner)
 	if err != nil {
 		return nil, err
 	}
@@ -111,25 +112,24 @@ func GetPlanets(userId string) ([]planets.Planet, error) {
 	return planets, nil
 }
 
-func CreatePlanet(hash string, features planets.PlanetFeatures, userId string) error {
+func CreatePlanet(hash string, features planets.PlanetFeatures, owner string) (planets.Planet, error) {
 	featuresBytes, err := json.Marshal(features)
-	if err != nil {
-		return err
-	}
-
-	_, err = db.Exec("INSERT INTO planets (hash, features, owner_id) VALUES (?, ?, ?)", hash, string(featuresBytes), userId)
-
-	return err
-}
-
-func RemovePlanet(hash string, owner string) (planets.Planet, error) {
-	dbPlanet := dbPlanet{}
-	err := db.Get(&dbPlanet, "SELECT hash, features FROM planets WHERE hash = ? AND owner_id = ?", hash, owner)
 	if err != nil {
 		return planets.Planet{}, err
 	}
 
-	_, err = db.Exec("DELETE FROM planets WHERE hash = ?", hash)
+	dbPlanet := dbPlanet{}
+	err = db.Get(&dbPlanet, "INSERT INTO planets (hash, features, owner_id) VALUES (?, ?, ?) RETURNING *", hash, string(featuresBytes), owner)
+	if err != nil {
+		return planets.Planet{}, err
+	}
+
+	return dbPlanetToPlanet(dbPlanet)
+}
+
+func RemovePlanet(hash string, owner string) (planets.Planet, error) {
+	dbPlanet := dbPlanet{}
+	err := db.Get(&dbPlanet, "DELETE FROM planets WHERE hash = ? AND owner_id = ? RETURNING *", hash, owner)
 	if err != nil {
 		return planets.Planet{}, err
 	}
@@ -139,12 +139,7 @@ func RemovePlanet(hash string, owner string) (planets.Planet, error) {
 
 func CreateUser(id string) (User, error) {
 	user := User{}
-	_, err := db.Exec("INSERT INTO users (user_id) VALUES (?) ON CONFLICT DO NOTHING", id)
-	if err != nil {
-		return User{}, err
-	}
-
-	err = db.Get(&user, "SELECT user_id, admin, coins FROM users WHERE user_id = ?", id)
+	err := db.Get(&user, "INSERT INTO users (user_id) VALUES (?) ON CONFLICT DO NOTHING RETURNING *", id)
 	if err != nil {
 		return User{}, err
 	}
@@ -154,8 +149,7 @@ func CreateUser(id string) (User, error) {
 
 func GetUser(id string) (User, error) {
 	user := User{}
-
-	err := db.Get(&user, "SELECT user_id, admin, coins FROM users WHERE user_id = ?", id)
+	err := db.Get(&user, "SELECT * FROM users WHERE user_id = ?", id)
 	if err != nil {
 		return User{}, err
 	}
@@ -163,17 +157,22 @@ func GetUser(id string) (User, error) {
 	return user, nil
 }
 
-func UpdateUser(user User) error {
-	_, err := db.Exec("UPDATE users SET admin = ?, coins = ? WHERE user_id = ?", user.Admin, user.Coins, user.UserId)
+func UpdateUser(newUser User) (User, error) {
+	user := User{}
+	err := db.Get(&user, "UPDATE users SET admin = ?, coins = ? WHERE user_id = ? RETURNING *", newUser.Admin, newUser.Coins, newUser.UserId)
+	if err != nil {
+		return User{}, err
+	}
 
-	return err
+	return user, err
 }
 
-func UpdatePlanet(hash string, destination string, source string) (planets.Planet, error) {
-	_, err := db.Exec("UPDATE planets SET owner_id = ? WHERE hash = ? AND owner_id = ?", destination, hash, source)
+func TransferPlanet(hash string, destination string, source string) (planets.Planet, error) {
+	dbPlanet := dbPlanet{}
+	err := db.Get(&dbPlanet, "UPDATE planets SET owner_id = ? WHERE hash = ? AND owner_id = ? RETURNING *", destination, hash, source)
 	if err != nil {
 		return planets.Planet{}, err
 	}
 
-	return GetPlanet(hash)
+	return dbPlanetToPlanet(dbPlanet)
 }
