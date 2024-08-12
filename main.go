@@ -15,5 +15,6 @@ func main() {
 	}
 
 	db.InitDB()
+	startPyroscope()
 	server.SetupServer()
 }

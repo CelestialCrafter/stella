@@ -1,0 +1,19 @@
+# api
+[] = optional, <> = required variable, /* <text> */ = comment
+
+## multiple planet operations
+- GET /api/planets/<user id>
+
+## planet operations
+- POST /api/planet/[?override=<hash> /* only available for admin accounts */]
+- GET /api/planet/<id>
+/* idempotent */
+- DELETE /api/planet/<id>
+
+## api keys - idempotent
+- PUT /api/auth/key
+
+## oauth2 - user only
+- GET /api/auth/login/<provider>
+- POST /api/auth/callback/<provider>?state=<random state>&code=<oauth2 code>&scope=<oauth2 scope>
+

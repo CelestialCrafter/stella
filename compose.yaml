@@ -7,6 +7,8 @@ services:
     hostname: stella
     ports:
       - 8000:80
+    environment:
+      PYROSCOPE_ADDRESS: http://pyroscope:4040
     volumes:
       - ./.env:/app/.env
       - ./stella.db:/app/stella.db
