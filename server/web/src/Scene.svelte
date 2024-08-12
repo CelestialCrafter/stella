@@ -1,8 +1,10 @@
 <script>
 	import { onMount } from 'svelte';
 	import { initScene, addPlanets } from './scene.js';
-	export let handleCanvasClick;
+	import { selectedPlanet } from './scene.js';
+
 	export let planets;
+	export let selected;
 
 	let canvas;
 	onMount(() => {
@@ -11,4 +13,4 @@
 	});
 </script>
 
-<canvas on:mousedown={handleCanvasClick} bind:this={canvas}></canvas>
+<canvas on:mousedown={() => (selected = selectedPlanet()?.name)} bind:this={canvas}></canvas>

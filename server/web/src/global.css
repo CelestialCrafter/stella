@@ -1,3 +1,10 @@
 canvas {
 	display: block;
 }
+
+button {
+	border-radius: 1rem;
+	background-color: lightgray;
+	display: inline-block;
+	padding: 0.5rem;
+}

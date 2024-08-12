@@ -1,10 +1,10 @@
 <script>
 	import { onMount } from 'svelte';
-	import { selectedPlanet } from './scene.js';
 	import * as jose from 'jose';
 
-	import Scene from './Scene.svelte';
 	import SelectedPlanet from './SelectedPlanet.svelte';
+	import ApiKey from './ApiKey.svelte';
+	import Scene from './Scene.svelte';
 
 	$: planets = {};
 	$: selected = null;
@@ -13,7 +13,7 @@
 	onMount(async () => {
 		if (!window.localStorage.getItem('token')) return login();
 
-		const token = jose.decodeJwt(localStorage.getItem('token'));
+		const token = jose.decodeJwt(window.localStorage.getItem('token'));
 		const response = await fetch(`/api/user/${token.id}`);
 		if (!response.ok) return login();
 		const user = await response.json();
@@ -23,18 +23,14 @@
 
 <main>
 	{#if Object.keys(planets).length < 1}
-		<span>
+		<p>
 			Loading...<br />
 			(or no planets)
-		</span>
+		</p>
+		<br />
+		<ApiKey />
 	{:else}
 		<SelectedPlanet planet={selected ? planets[selected] : null} />
-		<Scene
-			handleCanvasClick={() => (selected = selectedPlanet()?.name)}
-			planets={Object.values(planets)}
-		/>
+		<Scene bind:selected planets={Object.values(planets)} />
 	{/if}
 </main>
-
-<style>
-</style>

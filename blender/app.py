@@ -83,17 +83,20 @@ def apply_blackhole_colors(ring_style, colors):
 
     # ring
     normalized = [normalize_color(color) for color in colors]
-    size = (8, 8)
+    size = (32, 32)
     image = bpy.data.images.new("BlackHoleRingImage", size[1], size[0])
     pixels = [None] * size[0] * size[1]
 
     for x in range(size[0]):
         for y in range(size[1]):
+            vertical = ring_style == "vertical"
             selected_color = normalized[0]
-            if ring_style == "vertical" and y > size[1] / 2:
+
+            if vertical and y > size[1] / 2:
                 selected_color = normalized[1]
-            elif ring_style == "horizontal" and x > size[0] / 2:
+            elif not vertical and x > size[0] / 2:
                 selected_color = normalized[1]
+
             pixels[(y * size[0]) + x] = selected_color
 
     pixels = [chan for px in pixels for chan in px]

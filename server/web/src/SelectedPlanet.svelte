@@ -26,9 +26,7 @@
 			{/if}
 		{:else if features.type === 'blackhole'}
 			<span>
-				Blackhole Style: {['vertical', 'horizontal'].includes(features.blackhole_style)
-					? features.blackhole_style
-					: 'other'}
+				Blackhole Style: {features.blackhole_style === 'vertical' ? 'vertical' : 'horizontal'}
 			</span><br />
 			<span>Blackhole Ring Color 1: rgb {values.blackhole_colors[0].join(', ')}</span><br />
 			<span>Blackhole Ring Color 2: rgb {values.blackhole_colors[1].join(', ')}</span><br />
