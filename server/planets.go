@@ -33,14 +33,16 @@ func NewPlanet(c echo.Context) error {
 	claims := token.Claims.(*userClaims)
 	id := claims.ID
 
-	_, ok := newPlanetLocks[id]
-	if !ok {
-		newPlanetLocks[id] = &sync.Mutex{}
-	}
-	lock := newPlanetLocks[id]
+	if !claims.Admin {
+		_, ok := newPlanetLocks[id]
+		if !ok {
+			newPlanetLocks[id] = &sync.Mutex{}
+		}
+		lock := newPlanetLocks[id]
 
-	lock.Lock()
-	defer lock.Unlock()
+		lock.Lock()
+		defer lock.Unlock()
+	}
 
 	user, err := db.GetUser(id)
 	if err != nil {
