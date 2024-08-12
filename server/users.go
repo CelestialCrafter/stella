@@ -1,6 +1,7 @@
 package server
 
 import (
+	"database/sql"
 	"errors"
 	"net/http"
 
@@ -13,9 +14,10 @@ func GetUser(c echo.Context) error {
 
 	user, err := db.GetUser(id)
 	if err != nil {
-		if errors.Is(err, db.NotFoundError) {
-			return jsonError(c, http.StatusNotFound, err)
+		if errors.Is(err, sql.ErrNoRows) {
+			return jsonError(c, http.StatusNotFound, errors.New("user not found"))
 		}
+
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
 

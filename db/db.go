@@ -1,7 +1,6 @@
 package db
 
 import (
-	"database/sql"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -87,9 +86,6 @@ func GetPlanet(hash string) (planets.Planet, error) {
 	var dbPlanet dbPlanet
 	err := db.Get(&dbPlanet, "SELECT hash, features FROM planets WHERE hash = ?", hash)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return planets.Planet{}, NotFoundError
-		}
 		return planets.Planet{}, err
 	}
 
@@ -130,9 +126,6 @@ func RemovePlanet(hash string, owner string) (planets.Planet, error) {
 	dbPlanet := dbPlanet{}
 	err := db.Get(&dbPlanet, "SELECT hash, features FROM planets WHERE hash = ? AND owner_id = ?", hash, owner)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return planets.Planet{}, NotFoundError
-		}
 		return planets.Planet{}, err
 	}
 
@@ -164,9 +157,6 @@ func GetUser(id string) (User, error) {
 
 	err := db.Get(&user, "SELECT user_id, admin, coins FROM users WHERE user_id = ?", id)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return User{}, NotFoundError
-		}
 		return User{}, err
 	}
 

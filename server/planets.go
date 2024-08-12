@@ -1,6 +1,7 @@
 package server
 
 import (
+	"database/sql"
 	"errors"
 	"net/http"
 	"os"
@@ -18,8 +19,8 @@ var newPlanetLocks = map[string]*sync.Mutex{}
 func GetPlanet(c echo.Context) error {
 	planet, err := db.GetPlanet(c.Param("hash"))
 	if err != nil {
-		if errors.Is(err, db.NotFoundError) {
-			return jsonError(c, http.StatusNotFound, err)
+		if errors.Is(err, sql.ErrNoRows) {
+			return jsonError(c, http.StatusNotFound, errors.New("planet not found"))
 		}
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
@@ -85,8 +86,8 @@ func DeletePlanet(c echo.Context) error {
 
 	planet, err := db.RemovePlanet(hash, id)
 	if err != nil {
-		if errors.Is(err, db.NotFoundError) {
-			return jsonError(c, http.StatusNotFound, err)
+		if errors.Is(err, sql.ErrNoRows) {
+			return jsonError(c, http.StatusNotFound, errors.New("planet not found"))
 		}
 
 		return jsonError(c, http.StatusInternalServerError, err)
@@ -118,8 +119,8 @@ func GivePlanet(c echo.Context) error {
 
 	planet, err := db.UpdatePlanet(hash, destination.id, source)
 	if err != nil {
-		if errors.Is(err, db.NotFoundError) {
-			return jsonError(c, http.StatusNotFound, err)
+		if errors.Is(err, sql.ErrNoRows) {
+			return jsonError(c, http.StatusNotFound, errors.New("planet not found"))
 		}
 
 		return jsonError(c, http.StatusInternalServerError, err)
