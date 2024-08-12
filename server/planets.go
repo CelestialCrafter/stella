@@ -70,13 +70,15 @@ func NewPlanet(c echo.Context) error {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
-	user.Coins -= 1
-	_, err = db.UpdateUser(user)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return jsonError(c, http.StatusNotFound, errors.New("user not found"))
+	if !user.Admin {
+		user.Coins -= 1
+		_, err = db.UpdateUser(user)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return jsonError(c, http.StatusNotFound, errors.New("user not found"))
+			}
+			return jsonError(c, http.StatusInternalServerError, err)
 		}
-		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
 	return c.JSON(http.StatusOK, planet)
