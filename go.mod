@@ -3,6 +3,8 @@ module github.com/CelestialCrafter/stella
 go 1.22.6
 
 require (
+	github.com/CelestialCrafter/games v0.0.0-20240817224815-657d5ab17216
+	github.com/charmbracelet/bubbletea v0.27.0
 	github.com/charmbracelet/log v0.4.0
 	github.com/globocom/echo-prometheus v0.1.2
 	github.com/golang-jwt/jwt/v5 v5.2.1
@@ -13,12 +15,10 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/prometheus/client_golang v1.11.1
 	golang.org/x/oauth2 v0.22.0
-	github.com/charmbracelet/bubbletea v0.27.0
 )
 
 require (
 	cloud.google.com/go/compute/metadata v0.3.0 // indirect
-	github.com/CelestialCrafter/games v0.0.0-20240807032636-e778eac58ba1 // indirect
 	github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be // indirect
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
@@ -35,6 +35,7 @@ require (
 	github.com/charmbracelet/x/input v0.1.0 // indirect
 	github.com/charmbracelet/x/term v0.1.1 // indirect
 	github.com/charmbracelet/x/windows v0.1.0 // indirect
+	github.com/coder/websocket v1.8.12 // indirect
 	github.com/containerd/console v1.0.4 // indirect
 	github.com/creack/pty v1.1.21 // indirect
 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect

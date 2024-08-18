@@ -3,6 +3,7 @@ package server
 import (
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -44,8 +45,17 @@ func setupRoutes(e *echo.Echo) {
 	})
 
 	a := e.Group("/api")
+	a.Use(middleware.TimeoutWithConfig(middleware.TimeoutConfig{
+		Skipper:      middleware.DefaultSkipper,
+		ErrorMessage: "response timed out",
+		Timeout:      30 * time.Second,
+	}))
+
 	r := a.Group("")
 	r.Use(jwtMiddleware())
+
+	// do not move this to the a group - having a timeout breaks hijacking
+	e.GET("/api/planet/play", PlayPlanet).Name = "play-planet"
 
 	a.GET("/planet/:hash", GetPlanet).Name = "get-planet"
 	r.DELETE("/planet/:hash", DeletePlanet).Name = "delete-planet"

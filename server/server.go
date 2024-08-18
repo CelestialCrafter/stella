@@ -2,7 +2,7 @@ package server
 
 import (
 	"os"
-	"time"
+	// "time"
 
 	"github.com/charmbracelet/log"
 	echoPrometheus "github.com/globocom/echo-prometheus"
@@ -42,11 +42,6 @@ func SetupServer() {
 	logging(e)
 	e.Use(middleware.RecoverWithConfig(middleware.RecoverConfig{
 		LogErrorFunc: logPanicRecover,
-	}))
-	e.Use(middleware.TimeoutWithConfig(middleware.TimeoutConfig{
-		Skipper:      middleware.DefaultSkipper,
-		ErrorMessage: "response timed out",
-		Timeout:      30 * time.Second,
 	}))
 	e.Use(middleware.CORS())
 

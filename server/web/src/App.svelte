@@ -5,6 +5,7 @@
 	import SelectedPlanet from './SelectedPlanet.svelte';
 	import ApiKey from './ApiKey.svelte';
 	import Scene from './Scene.svelte';
+	import Play from './Play.svelte';
 
 	$: planets = {};
 	$: selected = null;
@@ -31,6 +32,7 @@
 		<ApiKey />
 	{:else}
 		<SelectedPlanet planet={selected ? planets[selected] : null} />
-		<Scene bind:selected planets={Object.values(planets)} />
+		<!-- <Scene bind:selected planets={Object.values(planets)} /> -->
+		<Play bind:selected />
 	{/if}
 </main>
