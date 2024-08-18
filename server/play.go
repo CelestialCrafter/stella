@@ -105,11 +105,19 @@ func initialize(ctx context.Context, c *websocket.Conn, session *Session) error 
 	return w.Close()
 }
 
-var codeToTea = map[string]tea.KeyType{
-	"ArrowLeft":  tea.KeyLeft,
-	"ArrowRight": tea.KeyRight,
-	"ArrowUp":    tea.KeyUp,
-	"ArrowDown":  tea.KeyDown,
+var codeToTea = map[string]tea.Key{
+	"ArrowLeft":  {Type: tea.KeyLeft},
+	"ArrowRight": {Type: tea.KeyRight},
+	"ArrowUp":    {Type: tea.KeyUp},
+	"ArrowDown":  {Type: tea.KeyDown},
+	"KeyW":       {Runes: []rune{'w'}, Type: tea.KeyRunes},
+	"KeyA":       {Runes: []rune{'a'}, Type: tea.KeyRunes},
+	"KeyS":       {Runes: []rune{'s'}, Type: tea.KeyRunes},
+	"KeyD":       {Runes: []rune{'d'}, Type: tea.KeyRunes},
+	"KeyH":       {Runes: []rune{'h'}, Type: tea.KeyRunes},
+	"KeyJ":       {Runes: []rune{'j'}, Type: tea.KeyRunes},
+	"KeyK":       {Runes: []rune{'k'}, Type: tea.KeyRunes},
+	"KeyL":       {Runes: []rune{'l'}, Type: tea.KeyRunes},
 }
 
 func serializeSession(s *Session) ([]byte, error) {
@@ -142,14 +150,13 @@ func tick(ctx context.Context, c *websocket.Conn, session *Session) error {
 		return err
 	}
 
-	keyType, ok := codeToTea[string(keyCodeBytes)]
+	key, ok := codeToTea[string(keyCodeBytes)]
 	// silently fail
 	if !ok {
 		return nil
 	}
 
-	keyMsg := tea.KeyMsg(tea.Key{Type: keyType})
-	session.model.Update(keyMsg)
+	session.model.Update(tea.KeyMsg(key))
 
 	w, err := c.Writer(ctx, typ)
 	if err != nil {
