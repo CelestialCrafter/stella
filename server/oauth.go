@@ -89,7 +89,7 @@ func Callback(c echo.Context) error {
 	}
 
 	claims.ID = fmt.Sprint("google-", claims.ID)
-	token, err := sign(claims)
+	token, err := Sign(claims)
 	if err != nil {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}

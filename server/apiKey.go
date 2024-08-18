@@ -13,7 +13,7 @@ func NewApiKey(c echo.Context) error {
 	claims := token.Claims.(*userClaims)
 	claims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(time.Hour * 24 * 365))
 
-	newToken, err := sign(claims)
+	newToken, err := Sign(claims)
 	if err != nil {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}
