@@ -17,7 +17,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// this file is mostly a bad reimplementation of charmbracelet/bubbletea/tea.go's program.eventLoop and program.Run
+// this file is mostly a bad reimplementation of charmbracelet/bubbletea/tea.go
 
 type Session struct {
 	model    tea.Model
@@ -156,7 +156,11 @@ func tick(ctx context.Context, c *websocket.Conn, session *Session) error {
 		return nil
 	}
 
-	session.model.Update(tea.KeyMsg(key))
+	var cmd tea.Cmd
+	session.model, cmd = session.model.Update(tea.KeyMsg(key))
+
+	// @TODO handle cmds
+	_ = cmd
 
 	w, err := c.Writer(ctx, typ)
 	if err != nil {
