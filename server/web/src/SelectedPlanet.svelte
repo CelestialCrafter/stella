@@ -1,9 +1,9 @@
 <script>
-	export let planet;
+	import { selectedPlanet } from './stores';
 </script>
 
-{#if planet != null}
-	{@const { features, values } = planet}
+{#if $selectedPlanet != null}
+	{@const { features, values } = $selectedPlanet}
 	<section class="selected-planet">
 		<span>Type: {features.type}</span><br />
 

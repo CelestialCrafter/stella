@@ -6,7 +6,6 @@ import (
 	"errors"
 	"io"
 	"net/http"
-	"strconv"
 
 	twenty48 "github.com/CelestialCrafter/games/apps/2048"
 	"github.com/CelestialCrafter/games/common"
@@ -97,7 +96,18 @@ func initialize(ctx context.Context, c *websocket.Conn, session *Session) error 
 		return err
 	}
 
-	_, err = w.Write([]byte(strconv.Itoa(int(session.game))))
+	game, err := json.Marshal(&struct {
+		Type string `json:"type"`
+		Game uint   `json:"game"`
+	}{
+		Type: "game",
+		Game: session.game,
+	})
+	if err != nil {
+		return err
+	}
+
+	_, err = w.Write(game)
 	if err != nil {
 		return err
 	}
@@ -128,9 +138,11 @@ func serializeSession(s *Session) ([]byte, error) {
 			return nil, errors.New("model did not match game id")
 		}
 		return json.Marshal(&struct {
+			Type     string     `json:"type"`
 			Board    [][]uint16 `json:"board"`
 			Finished bool       `json:"finished"`
 		}{
+			Type:     "state",
 			Board:    game.Board,
 			Finished: game.Finished,
 		})

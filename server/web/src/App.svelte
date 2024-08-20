@@ -4,22 +4,22 @@
 
 	import SelectedPlanet from './SelectedPlanet.svelte';
 	import ApiKey from './ApiKey.svelte';
-	import Scene from './Scene.svelte';
+	import Inventory from './inventory/Inventory.svelte';
 	import Play from './Play.svelte';
 
-	$: planets = {};
-	$: selected = null;
+	import { planets } from './stores';
 
 	const login = () => window.location.assign('/auth/login');
-	onMount(async () => {
-		if (!window.localStorage.getItem('token')) return login();
-
-		const token = jose.decodeJwt(window.localStorage.getItem('token'));
-		const response = await fetch(`/api/user/${token.id}`);
-		if (!response.ok) return login();
-		const user = await response.json();
-		planets = user.planets.reduce((acc, x) => ({ ...acc, [x.hash]: x }), {});
-	});
+	onMount(() =>
+		(async () => {
+			if (!window.localStorage.getItem('token')) return login();
+			const token = jose.decodeJwt(window.localStorage.getItem('token'));
+			const response = await fetch(`/api/user/${token.id}`);
+			if (!response.ok) return login();
+			const user = await response.json();
+			planets.set(user.planets.reduce((acc, x) => ({ ...acc, [x.hash]: x }), {}));
+		})()
+	);
 </script>
 
 <main>
@@ -31,8 +31,8 @@
 		<br />
 		<ApiKey />
 	{:else}
-		<SelectedPlanet planet={selected ? planets[selected] : null} />
-		<!-- <Scene bind:selected planets={Object.values(planets)} /> -->
-		<Play bind:selected />
+		<SelectedPlanet />
+		<Inventory />
+		<Play />
 	{/if}
 </main>
