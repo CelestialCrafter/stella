@@ -24,5 +24,6 @@
 		grid-row: 1/3;
 		width: 100% !important;
 		height: 100% !important;
+		border-radius: 1rem;
 	}
 </style>
