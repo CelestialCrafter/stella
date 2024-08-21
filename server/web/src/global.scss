@@ -1,0 +1,28 @@
+@use './colors.scss';
+
+* {
+  color: colors.$text;
+}
+
+button {
+  padding: 0.5rem 0.75rem;
+  margin: 0.2rem;
+  border-radius: 2rem;
+  background-color: colors.$primary;
+  transition: background-color 0.15s;
+
+  &:disabled {
+    background-color: colors.$disabled;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+hr {
+  margin: 0.75rem auto;
+  color: colors.$disabled;
+}
+
+.active {
+  background-color: colors.$secondary;
+}

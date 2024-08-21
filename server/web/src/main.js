@@ -1,6 +1,6 @@
 import App from './App.svelte';
 import 'ress';
-import './global.css';
+import './global.scss';
 
 const app = new App({
 	target: document.getElementById('app')

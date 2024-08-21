@@ -56,7 +56,7 @@ export const initScene = async (canvas, state) => {
 	camera.position.setZ(100);
 	controls.update();
 
-	return [scene, font];
+	return [renderer.dispose, scene, font];
 };
 
 export const updateScene = (scene, font, state) => {

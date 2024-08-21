@@ -9,12 +9,7 @@ export const initScene = canvas => {
 	const pointer = new THREE.Vector2();
 	const raycaster = new THREE.Raycaster();
 	const scene = new THREE.Scene();
-	const camera = new THREE.PerspectiveCamera(
-		70,
-		window.innerWidth / window.innerHeight,
-		0.1,
-		20000
-	);
+	const camera = new THREE.PerspectiveCamera(70, 0, 0.1, 20000);
 	const controls = new OrbitControls(camera, renderer.domElement);
 
 	renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -49,19 +44,21 @@ export const initScene = canvas => {
 
 	const resize = () => {
 		if (!renderer) return;
-		renderer.setSize(window.innerWidth, window.innerHeight);
-		camera.aspect = window.innerWidth / window.innerHeight;
+		const { offsetWidth: width, offsetHeight: height } = renderer.domElement;
+		renderer.setSize(width, height);
+		camera.aspect = width / height;
 		camera.updateProjectionMatrix();
 	};
 
 	const pointerMove = event => {
-		pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
-		pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+		const { clientHeight, clientWidth } = renderer.domElement;
+		pointer.x = (event.offsetX / clientWidth) * 2 - 1;
+		pointer.y = -(event.offsetY / clientHeight) * 2 + 1;
 	};
 
 	resize();
 	window.addEventListener('resize', resize);
-	window.addEventListener('pointermove', pointerMove);
+	renderer.domElement.addEventListener('pointermove', pointerMove);
 
 	return { controls, scene, camera, animate, renderer, intersectedObject, resize, pointerMove };
 };

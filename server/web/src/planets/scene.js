@@ -7,7 +7,7 @@ export const initScene = canvas => {
 	const { controls, scene, camera, renderer, animate, intersectedObject } = baseInitScene(canvas);
 	camera.position.set(25, 25, 50);
 
-	const light = new THREE.AmbientLight(0x404040, 70);
+	const light = new THREE.AmbientLight(0x404040, 80);
 	scene.add(light);
 
 	controls.autoRotate = true;
@@ -37,6 +37,11 @@ export const initScene = canvas => {
 		})();
 	});
 
-	return () =>
-		intersectedObject(object => object.type === 'Group' && object.userData.name === 'Planet');
+	return [
+		() => {
+			unsubscribe();
+			renderer.dispose();
+		},
+		() => intersectedObject(object => object.type === 'Group' && object.userData.name === 'Planet')
+	];
 };

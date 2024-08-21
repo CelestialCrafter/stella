@@ -1,13 +1,19 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount, tick } from 'svelte';
 	import * as jose from 'jose';
 
-	import SelectedPlanet from './SelectedPlanet.svelte';
 	import ApiKey from './ApiKey.svelte';
-	import Inventory from './inventory/Inventory.svelte';
 	import Play from './play/Play.svelte';
+	import Inventory from './planets/Inventory.svelte';
 
-	import { planets } from './stores';
+	import { planets, selectedPlanet } from './stores';
+	import { Route, Router } from 'svelte-routing';
+
+	const hashChange = () => {
+		console.log(window.location.hash);
+		const hash = window.location.hash.split('#')[1];
+		if (Object.keys($planets).includes(hash)) selectedPlanet.set($planets[hash]);
+	};
 
 	const login = () => window.location.assign('/auth/login');
 	onMount(() =>
@@ -18,11 +24,15 @@
 			if (!response.ok) return login();
 			const user = await response.json();
 			planets.set(user.planets.reduce((acc, x) => ({ ...acc, [x.hash]: x }), {}));
+			hashChange();
 		})()
 	);
+
+	window.onhashchange = hashChange;
+	onDestroy(() => window.removeEventListener('hashchange', hashChange));
 </script>
 
-<main>
+<Router basepath="/app">
 	{#if Object.keys(planets).length < 1}
 		<p>
 			Loading...<br />
@@ -31,8 +41,7 @@
 		<br />
 		<ApiKey />
 	{:else}
-		<!-- <SelectedPlanet /> -->
-		<!-- <Inventory /> -->
-		<Play />
+		<Route path="/inventory" component={Inventory} />
+		<Route path="/play" component={Play} />
 	{/if}
-</main>
+</Router>

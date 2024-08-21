@@ -22,16 +22,24 @@
 	document.onkeydown = e => ws.send(e.code);
 
 	let data = null;
+	let cleanup = () => {};
 	const unsubscribe = state.subscribe(newState => {
 		switch (newState.type) {
 			case 'init':
-				tick().then(async () => (data = await initScene(canvas, newState)));
+				tick().then(async () => {
+					const newData = await initScene(canvas, newState);
+					cleanup = newData[0];
+					data = newData.slice(1);
+				});
 			case 'state':
 				if (data) updateScene(...data, newState);
 		}
 	});
 
-	onDestroy(unsubscribe);
+	onDestroy(() => {
+		unsubscribe();
+		cleanup();
+	});
 </script>
 
 <canvas bind:this={canvas}></canvas>
