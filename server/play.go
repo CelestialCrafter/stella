@@ -90,31 +90,6 @@ func PlayPlanet(c echo.Context) error {
 	return nil
 }
 
-func initialize(ctx context.Context, c *websocket.Conn, session *Session) error {
-	w, err := c.Writer(ctx, websocket.MessageText)
-	if err != nil {
-		return err
-	}
-
-	game, err := json.Marshal(&struct {
-		Type string `json:"type"`
-		Game uint   `json:"game"`
-	}{
-		Type: "game",
-		Game: session.game,
-	})
-	if err != nil {
-		return err
-	}
-
-	_, err = w.Write(game)
-	if err != nil {
-		return err
-	}
-
-	return w.Close()
-}
-
 var codeToTea = map[string]tea.Key{
 	"ArrowLeft":  {Type: tea.KeyLeft},
 	"ArrowRight": {Type: tea.KeyRight},
@@ -130,7 +105,7 @@ var codeToTea = map[string]tea.Key{
 	"KeyL":       {Runes: []rune{'l'}, Type: tea.KeyRunes},
 }
 
-func serializeSession(s *Session) ([]byte, error) {
+func serializeSession(s *Session, msgType string) ([]byte, error) {
 	switch s.game {
 	case common.Twenty48.ID:
 		game, ok := s.model.(twenty48.Model)
@@ -139,16 +114,37 @@ func serializeSession(s *Session) ([]byte, error) {
 		}
 		return json.Marshal(&struct {
 			Type     string     `json:"type"`
+			Game     uint       `json:"game"`
 			Board    [][]uint16 `json:"board"`
 			Finished bool       `json:"finished"`
 		}{
-			Type:     "state",
+			Type:     msgType,
+			Game:     s.game,
 			Board:    game.Board,
 			Finished: game.Finished,
 		})
 	default:
 		return nil, errors.New("unsupported model")
 	}
+}
+
+func initialize(ctx context.Context, c *websocket.Conn, session *Session) error {
+	w, err := c.Writer(ctx, websocket.MessageText)
+	if err != nil {
+		return err
+	}
+
+	serialized, err := serializeSession(session, "init")
+	if err != nil {
+		return err
+	}
+
+	_, err = w.Write(serialized)
+	if err != nil {
+		return err
+	}
+
+	return w.Close()
 }
 
 func tick(ctx context.Context, c *websocket.Conn, session *Session) error {
@@ -179,7 +175,7 @@ func tick(ctx context.Context, c *websocket.Conn, session *Session) error {
 		return err
 	}
 
-	serialized, err := serializeSession(session)
+	serialized, err := serializeSession(session, "state")
 	if err != nil {
 		return err
 	}

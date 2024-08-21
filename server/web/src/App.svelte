@@ -5,7 +5,7 @@
 	import SelectedPlanet from './SelectedPlanet.svelte';
 	import ApiKey from './ApiKey.svelte';
 	import Inventory from './inventory/Inventory.svelte';
-	import Play from './Play.svelte';
+	import Play from './play/Play.svelte';
 
 	import { planets } from './stores';
 
@@ -31,8 +31,8 @@
 		<br />
 		<ApiKey />
 	{:else}
-		<SelectedPlanet />
-		<Inventory />
+		<!-- <SelectedPlanet /> -->
+		<!-- <Inventory /> -->
 		<Play />
 	{/if}
 </main>

@@ -2,7 +2,7 @@
 	import { selectedPlanet } from './stores';
 </script>
 
-{#if $selectedPlanet != null}
+{#if $selectedPlanet}
 	{@const { features, values } = $selectedPlanet}
 	<section class="selected-planet">
 		<span>Type: {features.type}</span><br />

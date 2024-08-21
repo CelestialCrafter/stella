@@ -8,5 +8,7 @@
 	onMount(() => (getSelectedPlanet = initScene(canvas)));
 </script>
 
-<canvas on:mousedown={() => selectedPlanet.set(getSelectedPlanet()?.name)} bind:this={canvas}
+<canvas
+	on:mousedown={() => selectedPlanet.set($planets[getSelectedPlanet()?.name] || null)}
+	bind:this={canvas}
 ></canvas>
