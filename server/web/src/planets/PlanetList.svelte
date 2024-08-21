@@ -12,8 +12,8 @@
 	</div>
 	<hr />
 	{#each Object.keys($planets) as hash}
-		<li class={$selectedPlanet?.hash === hash ? 'active' : ''}>
-			<a href={`#${hash}`}>
+		<li class={$selectedPlanet === hash ? 'active' : ''}>
+			<a on:click={() => selectedPlanet.set(hash)} href={`#${hash}`}>
 				{hash}
 			</a>
 		</li>

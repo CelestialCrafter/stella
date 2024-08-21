@@ -1,12 +1,12 @@
 <script>
-	import { selectedPlanet } from '../stores';
+	import { planets, selectedPlanet } from '../stores';
 	import ColorCell from '../ColorCell.svelte';
 
 	const displayNumber = num => num.toFixed(2);
 </script>
 
 {#if $selectedPlanet}
-	{@const { features, values } = $selectedPlanet}
+	{@const { features, values } = $planets[$selectedPlanet]}
 	<ul>
 		<li><span>Type</span>{features.type}</li>
 

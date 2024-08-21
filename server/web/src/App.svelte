@@ -11,7 +11,7 @@
 
 	const hashChange = () => {
 		const hash = window.location.hash.split('#')[1];
-		if (Object.keys($planets).includes(hash)) selectedPlanet.set($planets[hash]);
+		if (Object.keys($planets).includes(hash)) selectedPlanet.set(hash);
 	};
 
 	const login = () => window.location.assign('/auth/login');

@@ -1,23 +1,21 @@
 <script>
 	import { onDestroy, onMount } from 'svelte';
 	import { initScene } from './scene.js';
-	import { planets, selectedPlanet } from '../stores.js';
+	import { selectedPlanet } from '../stores.js';
 
 	let canvas;
 	let getSelectedPlanet = () => null;
 	let cleanup = () => {};
 
 	onMount(() => {
-		const fns = initScene(canvas);
-		cleanup = fns[0];
-		getSelectedPlanet = fns[1];
+		[cleanup, getSelectedPlanet] = initScene(canvas);
 	});
 
 	onDestroy(cleanup);
 </script>
 
 <canvas
-	on:mousedown={() => selectedPlanet.set($planets[getSelectedPlanet()?.name] || null)}
+	on:mousedown={() => selectedPlanet.set(getSelectedPlanet()?.name || null)}
 	bind:this={canvas}
 ></canvas>
 
