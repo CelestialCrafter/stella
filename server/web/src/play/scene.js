@@ -43,11 +43,12 @@ export const initScene = async (canvas, state) => {
 
 	const geometry = new TextGeometry('you lose!', { font, size, depth: 1 });
 	const material = new THREE.MeshBasicMaterial({
-		color: 0x000000
+		color: 0xffffff
 	});
 	const text = new THREE.Mesh(geometry, material);
 	text.name = 'lose';
 	text.position.setY(state.board[0].length * -spacing);
+	text.visible = state.finished;
 	scene.add(text);
 
 	bounding.getCenter(controls.target);
@@ -60,6 +61,8 @@ export const initScene = async (canvas, state) => {
 
 export const updateScene = (scene, font, state) => {
 	const cells = scene.getObjectsByProperty('name', 'cell');
+	const lose = scene.getObjectByProperty('name', 'lose');
+
 	for (const object of cells) {
 		const { r, c } = object.userData;
 		const cell = state.board[r][c];
@@ -68,8 +71,5 @@ export const updateScene = (scene, font, state) => {
 		object.geometry = new TextGeometry(cell.toString(), { font, size: 10, depth: 1 });
 	}
 
-	if (state.finished) {
-		const lose = scene.getObjectByProperty('name', 'lose');
-		lose.material.color.setHex(0xffffff);
-	}
+	lose.visible = state.finished;
 };
