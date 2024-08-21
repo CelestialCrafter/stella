@@ -26,12 +26,12 @@ export const initScene = canvas => {
 		renderer.render(scene, camera);
 	};
 
-	//const texture = new THREE.TextureLoader().load('public/skybox.jpg', () => {
-	//	texture.mapping = THREE.EquirectangularReflectionMapping;
-	//	texture.colorSpace = THREE.SRGBColorSpace;
-	//	scene.background = texture;
-	//});
-	//
+	const texture = new THREE.TextureLoader().load('public/skybox.jpg', () => {
+		texture.mapping = THREE.EquirectangularReflectionMapping;
+		texture.colorSpace = THREE.SRGBColorSpace;
+		scene.background = texture;
+	});
+
 	const intersectedObject = predicate => {
 		const intersects = raycaster.intersectObjects(Object.values(scene.children));
 		const searchObject = object => {
