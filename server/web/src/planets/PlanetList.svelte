@@ -29,6 +29,10 @@
 		padding: 1rem;
 		background-color: colors.$floating;
 
+		.actions {
+			text-align: center;
+		}
+
 		li {
 			border-radius: 2rem;
 			padding: 0.5rem;
@@ -40,10 +44,5 @@
 		display: block;
 		text-overflow: ellipsis;
 		overflow: hidden;
-	}
-
-	.actions {
-		display: flex;
-		justify-content: center;
 	}
 </style>

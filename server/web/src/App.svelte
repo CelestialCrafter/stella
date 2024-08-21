@@ -1,5 +1,5 @@
 <script>
-	import { onDestroy, onMount, tick } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import * as jose from 'jose';
 
 	import ApiKey from './ApiKey.svelte';
@@ -10,7 +10,6 @@
 	import { Route, Router } from 'svelte-routing';
 
 	const hashChange = () => {
-		console.log(window.location.hash);
 		const hash = window.location.hash.split('#')[1];
 		if (Object.keys($planets).includes(hash)) selectedPlanet.set($planets[hash]);
 	};

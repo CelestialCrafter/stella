@@ -1,6 +1,8 @@
 <script>
 	import { selectedPlanet } from '../stores';
 	import ColorCell from '../ColorCell.svelte';
+
+	const displayNumber = num => num.toFixed(2);
 </script>
 
 {#if $selectedPlanet}
@@ -10,20 +12,24 @@
 
 		{#if features.type === 'normal'}
 			<li><span>Rings</span>{features.normal_rings ? 'yes' : 'no'}</li>
-			<li><span>Size</span>{values.normal_size}</li>
+			<li><span>Size</span>{displayNumber(values.normal_size)}</li>
 			<li><span>Color</span><ColorCell value={values.normal_color} /></li>
 			{#if features.normal_rings}
 				<li><span>Rings</span>{values.normal_ring_amount}</li>
-				<li><span>Ring Size</span>{values.normal_ring_size}</li>
+				<li><span>Ring Size</span>{displayNumber(values.normal_ring_size)}</li>
 				{#each [...Array(values.normal_ring_amount).keys()] as i}
 					<li><span>Ring Color {i + 1}</span><ColorCell value={values.normal_ring_colors[i]} /></li>
+					<li>
+						<span>Ring Rotation {i + 1}</span>xyz {values.normal_ring_rotation[i]
+							.map(displayNumber)
+							.join(', ')}
+					</li>
 				{/each}
-				<li><span>Ring Rotation</span>xyz {values.normal_ring_rotation.join(', ')}</li>
 			{/if}
 		{:else if features.type === 'star'}
 			<li><span>Neutron Star</span>{features.star_neutron ? 'yes' : 'no'}</li>
-			<li><span>Brightness</span>{values.star_brightness}</li>
-			<li><span>Size</span>{values.star_size}</li>
+			<li><span>Brightness</span>{displayNumber(values.star_brightness)}</li>
+			<li><span>Size</span>{displayNumber(values.star_size)}</li>
 			{#if features.star_neutron}
 				<li><span>Color</span><ColorCell value={values.star_neutron_color} /></li>
 			{/if}
@@ -50,9 +56,11 @@
 	}
 
 	li {
-		span {
-			font-weight: bold;
-			margin-right: 0.5rem;
-		}
+		word-break: break-all;
+	}
+
+	span {
+		font-weight: bold;
+		margin-right: 0.5rem;
 	}
 </style>
