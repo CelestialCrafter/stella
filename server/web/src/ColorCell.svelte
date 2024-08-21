@@ -1,7 +1,7 @@
-<!-- @NOTE expects rgb value -->
-
 <script>
+	// @NOTE expects rgb value
 	export let value;
+	// @TODO add notification when color copied
 	const copy = () => navigator.clipboard.writeText(value.join(' '));
 </script>
 

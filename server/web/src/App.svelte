@@ -41,6 +41,6 @@
 		<ApiKey />
 	{:else}
 		<Route path="/inventory" component={Inventory} />
-		<Route path="/play" component={Play} />
+		<Route path="/play/:id" component={Play} let:params />
 	{/if}
 </Router>
