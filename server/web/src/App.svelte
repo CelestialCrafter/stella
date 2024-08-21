@@ -19,8 +19,10 @@
 		(async () => {
 			if (!window.localStorage.getItem('token')) return login();
 			const token = jose.decodeJwt(window.localStorage.getItem('token'));
+			if (token.exp < Date.now() / 1000) return login();
 			const response = await fetch(`/api/user/${token.id}`);
 			if (!response.ok) return login();
+
 			const user = await response.json();
 			planets.set(user.planets.reduce((acc, x) => ({ ...acc, [x.hash]: x }), {}));
 			hashChange();

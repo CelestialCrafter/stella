@@ -1,14 +1,51 @@
 <script>
+	import { navigate } from 'svelte-routing';
 	import { planets, selectedPlanet } from '../stores';
+	import { onMount } from 'svelte';
 	$: actionsDisabled = !$selectedPlanet;
+
+	let deleteDialog;
+
+	onMount(() => {
+		deleteDialog.onclose = async () => {
+			const planet = $selectedPlanet;
+
+			deleteDialog.showModal();
+			const rv = deleteDialog.returnValue;
+			if (rv !== 'confirm') return;
+
+			// @TODO add notification when deleted
+			await fetch(`/api/planet/${planet}`, {
+				method: 'DELETE',
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem('token')}`
+				}
+			});
+			planets.update(prev => {
+				const copy = { ...prev };
+				delete copy[planet];
+				return copy;
+			});
+		};
+	});
 </script>
+
+<dialog bind:this={deleteDialog}>
+	<h2>Are you sure you want to delete {$selectedPlanet}?</h2>
+	<form method="dialog">
+		<button value="confirm">Delete</button>
+		<button value="cancel">Cancel</button>
+	</form>
+</dialog>
 
 <ul style={actionsDisabled ? 'grid-row: 1/-1' : 'grid-row: 1'}>
 	<div class="actions">
 		<button>New</button>
-		<button disabled={actionsDisabled}>Delete</button>
+		<button on:click={() => deleteDialog.showModal()} disabled={actionsDisabled}>Delete</button>
 		<button disabled={actionsDisabled}>Transfer</button>
-		<button disabled={actionsDisabled}>Play</button>
+		<button on:click={() => navigate(`/play/${$selectedPlanet}`)} disabled={actionsDisabled}>
+			Play
+		</button>
 	</div>
 	<hr />
 	{#each Object.keys($planets) as hash}
