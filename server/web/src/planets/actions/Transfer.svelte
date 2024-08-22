@@ -38,7 +38,7 @@
 	<form method="dialog">
 		<input type="text" bind:value={destination} placeholder="New Owner ID..." required />
 		<button value="confirm">Transfer</button>
-		<button value="cancel">Cancel</button>
+		<button value="cancel" formnovalidate>Cancel</button>
 	</form>
 </dialog>
 
