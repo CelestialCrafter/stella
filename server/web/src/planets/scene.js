@@ -28,12 +28,15 @@ export const initScene = canvas => {
 				await Promise.all(hashes.map(hash => loader.loadAsync(`/models/${hash}.glb`)))
 			).map(gltf => gltf.scene);
 
+			const bounding = new THREE.Box3();
 			for (const [i, planet] of planetObjects.entries()) {
 				scene.add(planet);
 				planet.children[0].name = hashes[i];
-				const spaceVector = new THREE.Vector3(20, 0, 0);
+				const spaceVector = new THREE.Vector3(30, 0, 0);
 				planet.position.add(spaceVector.multiplyScalar(i));
+				bounding.expandByObject(planet);
 			}
+			bounding.getCenter(controls.target);
 		})();
 	});
 
