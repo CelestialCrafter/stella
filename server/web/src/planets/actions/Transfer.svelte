@@ -12,7 +12,7 @@
 			const rv = dialog.returnValue;
 			if (rv !== 'confirm') return;
 
-			// @TODO add notification when deleted
+			// @TODO add notification when transfered && loading indicator
 			await fetch(`/api/planet/transfer/${planet}`, {
 				method: 'POST',
 				body: JSON.stringify({ destination }),

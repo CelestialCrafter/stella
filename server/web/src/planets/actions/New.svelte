@@ -19,7 +19,7 @@
 			features.normal_rings = Boolean(features.normal_rings);
 			features.star_neutron = Boolean(features.star_neutron);
 
-			// @TODO add notification when deleted
+			// @TODO add notification when created && loading indicator
 			const newPlanet = await fetch(`/api/planet/new`, {
 				method: 'POST',
 				body: JSON.stringify(features),
