@@ -3,7 +3,7 @@ include:
   - metrics/compose.yaml
 services:
   stella:
-    build: .
+    build: ghcr.io/CelestialCrafter/stella:master
     hostname: stella
     ports:
       - 8000:80
