@@ -9,6 +9,7 @@
 
 <style>
 	.color-cell {
+		border: none;
 		display: inline-block;
 		vertical-align: middle;
 		padding: 0;
