@@ -75,12 +75,6 @@ def apply_blackhole_colors(ring_style, colors):
     blackhole = bpy.data.objects['BlackHole']
     blackhole.hide_set(False)
 
-    material = blackhole.active_material
-    nodes = material.node_tree.nodes
-
-    bsdf = nodes['Principled BSDF']
-    bsdf.inputs['Base Color'].default_value = normalize_color(colors[2])
-
     # ring
     normalized = [normalize_color(color) for color in colors]
     size = (32, 32)
@@ -129,6 +123,7 @@ def generate_planet(planet):
                 apply_neutron_rod()
         case "blackhole":
             apply_color(values["normal_color"])
+            apply_color(values["blackhole_colors"][2])
             apply_size(values["blackhole_size"])
             apply_blackhole_colors(features["blackhole_style"],
                                    values["blackhole_colors"])
