@@ -30,13 +30,14 @@ export const initScene = canvas => {
 	const intersectedObject = predicate => {
 		const intersects = raycaster.intersectObjects(Object.values(scene.children));
 		const searchObject = object => {
+			if (!object) return;
 			if (predicate(object)) return object;
 			return searchObject(object.parent);
 		};
 
 		for (const intersect of intersects) {
 			const found = searchObject(intersect.object);
-			if (found != null) return found;
+			if (found) return found;
 		}
 
 		return null;
