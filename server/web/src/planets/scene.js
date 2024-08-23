@@ -1,7 +1,7 @@
 import { GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { initScene as baseInitScene } from '../scene';
 import * as THREE from 'three';
-import { planets } from '../stores';
+import { planets, selectedPlanet } from '../stores';
 
 export const initScene = canvas => {
 	const { controls, scene, camera, renderer, animate, intersectedObject } = baseInitScene(canvas);
@@ -21,30 +21,49 @@ export const initScene = canvas => {
 	const loader = new GLTFLoader();
 
 	// @FIX dont do weird stuff when multiple planet updates occur
-	const unsubscribe = planets.subscribe(planets => {
-		const hashes = Object.keys(planets);
-		(async () => {
-			const planetObjects = (
-				await Promise.all(hashes.map(hash => loader.loadAsync(`/models/${hash}.glb`)))
-			).map(gltf => gltf.scene);
+	let current = {};
+	const unsubscribePlanets = planets.subscribe(planets => {
+		const currentHashes = Object.keys(current);
 
-			const bounding = new THREE.Box3();
-			for (const [i, planet] of planetObjects.entries()) {
+		const hashes = Object.keys(planets);
+		const newHashes = hashes.filter(hash => !currentHashes.includes(hash));
+		const oldHashes = currentHashes.filter(hash => !hashes.includes(hash));
+
+		scene.remove(...oldHashes.map(hash => current[hash]));
+		oldHashes.forEach(hash => delete current[hash]);
+
+		// @NOTE please do not move this async inside of the for loop for concurrent planet loads. the browser will probably crash...
+		(async () => {
+			for (const hash of newHashes) {
+				const planet = (await loader.loadAsync(`/models/${hash}.glb`)).scene;
+
+				current[hash] = planet;
+				planet.children[0].name = hash;
 				scene.add(planet);
-				planet.children[0].name = hashes[i];
-				const spaceVector = new THREE.Vector3(30, 0, 0);
-				planet.position.add(spaceVector.multiplyScalar(i));
-				bounding.expandByObject(planet);
 			}
-			bounding.getCenter(controls.target);
+
+			const currentPlanets = Object.values(current);
+			for (const [i, planet] of currentPlanets.entries()) {
+				planet.position.setX(30 * i);
+			}
+
+			const pos = currentPlanets[Math.round(Object.keys(current).length / 2)].position.clone();
+			controls.target.set(pos.x, pos.y, pos.z);
 		})();
+	});
+
+	const unsubscribeSelected = selectedPlanet.subscribe(selected => {
+		if (!selected) return;
+		const pos = current[selected].position.clone();
+		controls.target.set(pos.x, pos.y, pos.z);
 	});
 
 	return [
 		() => {
-			unsubscribe();
+			unsubscribePlanets();
+			unsubscribeSelected();
 			renderer.dispose();
 		},
-		() => intersectedObject(object => object.type === 'Group' && object.userData.name === 'Planet')
+		() => intersectedObject(object => object.userData.name === 'Planet')
 	];
 };
