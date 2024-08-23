@@ -1,5 +1,5 @@
 <script>
-	import { onDestroy, onMount } from 'svelte';
+	import { onDestroy, onMount, tick } from 'svelte';
 	import * as jose from 'jose';
 
 	import ApiKey from './ApiKey.svelte';
@@ -7,11 +7,16 @@
 	import Inventory from './planets/Inventory.svelte';
 
 	import { planets, selectedPlanet } from './stores';
-	import { Route, Router } from 'svelte-routing';
+	import { navigate, Route, Router } from 'svelte-routing';
+
+	const unsubscribe = selectedPlanet.subscribe(hash => {
+		if (!hash) return (window.location.hash = '');
+		window.location.hash = `#${hash}`;
+	});
 
 	const hashChange = () => {
 		const hash = window.location.hash.split('#')[1];
-		if (Object.keys($planets).includes(hash)) selectedPlanet.set(hash);
+		if ($selectedPlanet == hash) return;
 	};
 
 	const login = () => window.location.assign('/auth/login');
@@ -25,12 +30,17 @@
 
 			const user = await response.json();
 			planets.set(user.planets.reduce((acc, x) => ({ ...acc, [x.hash]: x }), {}));
-			hashChange();
+
+			const hash = window.location.hash;
+			if (Object.keys($planets).includes(hash)) selectedPlanet.set(hash);
 		})()
 	);
 
 	window.onhashchange = hashChange;
-	onDestroy(() => window.removeEventListener('hashchange', hashChange));
+	onDestroy(() => {
+		unsubscribe();
+		window.removeEventListener('hashchange', hashChange);
+	});
 </script>
 
 <Router basepath="/app">
@@ -42,6 +52,9 @@
 		<br />
 		<ApiKey />
 	{:else}
+		<Route path="/">
+			{tick().then(() => navigate('/app/inventory'))}
+		</Route>
 		<Route path="/inventory" component={Inventory} />
 		<Route path="/play/:id" component={Play} let:params />
 	{/if}
