@@ -40,28 +40,52 @@
 
 <dialog bind:this={dialog}>
 	<form method="dialog">
-		<label for="type">Type</label>
-		<select id="type" bind:value={features.type}>
-			<option value="normal" selected>Normal</option>
-			<option value="star">Star</option>
-			<option value="blackhole">Black Hole</option>
-		</select>
+		<div>
+			<label>
+				Type
+				<select id="type" bind:value={features.type}>
+					<option value="normal" selected>Normal</option>
+					<option value="star">Star</option>
+					<option value="blackhole">Black Hole</option>
+				</select>
+			</label>
 
-		{#if features.type === 'normal'}
-			<label for="normal_rings">Rings?</label>
-			<input id="normal_rings" type="checkbox" bind:value={features.normal_rings} />
-		{:else if features.type === 'star'}
-			<label for="star_neutron">Neutron?</label>
-			<input id="star_neutron" type="checkbox" bind:value={features.star_neutron} />
-		{:else}
-			<label for="blackhole_style">Blackhole Style</label>
-			<select id="blackhole_style" bind:value={features.blackhole_style}>
-				<option value="horizontal" selected>Horizontal</option>
-				<option value="vertical">Vertical</option>
-			</select>
-		{/if}
+			{#if features.type === 'normal'}
+				<label>
+					Rings?
+					<input id="normal_rings" type="checkbox" bind:value={features.normal_rings} />
+				</label>
+			{:else if features.type === 'star'}
+				<label>
+					Neutron?
+					<input id="star_neutron" type="checkbox" bind:value={features.star_neutron} />
+				</label>
+			{:else}
+				<label>
+					Blackhole Style
+					<select id="blackhole_style" bind:value={features.blackhole_style}>
+						<option value="horizontal" selected>Horizontal</option>
+						<option value="vertical">Vertical</option>
+					</select>
+				</label>
+			{/if}
+		</div>
 
-		<button value="confirm">Create</button>
-		<button value="cancel" formnovalidate>Cancel</button>
+		<div>
+			<button value="confirm">Create</button>
+			<button value="cancel" formnovalidate>Cancel</button>
+		</div>
 	</form>
 </dialog>
+
+<style lang="scss">
+	dialog {
+		max-width: 50%;
+	}
+
+	form {
+		gap: 1rem;
+		display: flex;
+		flex-direction: column;
+	}
+</style>

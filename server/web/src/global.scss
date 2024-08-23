@@ -5,14 +5,10 @@
 }
 
 button {
-  padding: 0.5rem 0.75rem;
-  margin: 0.2rem;
-  border-radius: 2rem;
-  background-color: colors.$primary;
-  transition: background-color 0.15s;
+  transition: border-color 0.15s;
 
   &:disabled {
-    background-color: colors.$disabled;
+    border-color: colors.$disabled;
     opacity: 0.5;
     pointer-events: none;
   }
@@ -25,4 +21,42 @@ hr {
 
 .active {
   background-color: colors.$secondary;
+}
+
+@keyframes open {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+dialog {
+  margin: auto;
+  background-color: colors.$floating;
+  border: none;
+  border-radius: 1rem;
+  padding: 1rem;
+
+  transition: all 0.7s allow-discrete;
+
+  &[open] {
+    animation: open 0.25s forwards;
+  }
+}
+
+label {
+  display: block;
+}
+
+select,
+input,
+button {
+  appearance: auto;
+  border: 0.1rem solid colors.$accent;
+  padding: 0.5rem 0.75rem;
+  margin: 0.1rem;
+  border-radius: 2rem;
 }

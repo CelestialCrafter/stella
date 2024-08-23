@@ -23,6 +23,7 @@
 				delete copy[planet];
 				return copy;
 			});
+			selectedPlanet.set(null);
 		};
 	});
 </script>
@@ -38,7 +39,18 @@
 <style lang="scss">
 	@use '../../colors.scss';
 
+	dialog {
+		max-width: 50%;
+		&[open] {
+			gap: 1rem;
+			display: flex;
+			flex-direction: column;
+		}
+	}
+
 	h2 {
+		overflow: hidden;
+		text-overflow: ellipsis;
 		color: colors.$danger;
 	}
 </style>

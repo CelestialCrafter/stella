@@ -26,15 +26,19 @@
 				delete copy[planet];
 				return copy;
 			});
+			selectedPlanet.set(null);
 		};
 	});
 </script>
 
 <dialog bind:this={dialog}>
-	<h2>Are you sure you want to transfer {$selectedPlanet}?</h2>
-	<span>
-		WARNING: double check the new owner id! if you mistype it, the planet will be effectively voided
-	</span>
+	<div class="text">
+		<h2>Are you sure you want to transfer {$selectedPlanet}?</h2>
+		<span>
+			WARNING: double check the new owner id! if you mistype it, the planet will be effectively
+			voided
+		</span>
+	</div>
 	<form method="dialog">
 		<input type="text" bind:value={destination} placeholder="New Owner ID..." required />
 		<button value="confirm">Transfer</button>
@@ -45,8 +49,19 @@
 <style lang="scss">
 	@use '../../colors.scss';
 
+	dialog {
+		max-width: 50%;
+		&[open] {
+			gap: 1rem;
+			display: flex;
+			flex-direction: column;
+		}
+	}
+
 	h2,
 	span {
+		overflow: hidden;
+		text-overflow: ellipsis;
 		color: colors.$danger;
 	}
 </style>
