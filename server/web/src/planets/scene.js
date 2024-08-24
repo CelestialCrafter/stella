@@ -1,7 +1,7 @@
 import { GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { initScene as baseInitScene } from '../scene';
 import * as THREE from 'three';
-import { planets, selectedPlanet } from '../stores';
+import { orbit, planets, selectedPlanet } from '../stores';
 
 export const initScene = canvas => {
 	const { controls, scene, camera, renderer, animate, intersectedObject } = baseInitScene(canvas);
@@ -11,12 +11,10 @@ export const initScene = canvas => {
 	scene.add(light);
 
 	controls.autoRotate = true;
-	controls.maxDistance = controls.getDistance() * 3;
+	controls.maxDistance = controls.getDistance() * 2;
 	controls.minDistance = controls.getDistance() / 10;
 	controls.enablePan = false;
 	controls.update();
-
-	renderer.setAnimationLoop(animate);
 
 	const loader = new GLTFLoader();
 
@@ -41,28 +39,45 @@ export const initScene = canvas => {
 				planet.children[0].name = hash;
 				scene.add(planet);
 			}
-
-			const currentPlanets = Object.values(current);
-			if (currentPlanets.length < 1) return;
-			for (const [i, planet] of currentPlanets.entries()) {
-				planet.position.setX(30 * i);
-			}
-
-			const pos = currentPlanets[Math.round(Object.keys(current).length / 2)].position.clone();
-			controls.target.set(pos.x, pos.y, pos.z);
 		})();
 	});
 
-	const unsubscribeSelected = selectedPlanet.subscribe(selected => {
-		if (!selected) return;
-		const pos = current[selected].position.clone();
-		controls.target.set(pos.x, pos.y, pos.z);
+	let selected;
+	const unsubscribeSelected = selectedPlanet.subscribe(newSelected => {
+		if (!newSelected) return;
+		selected = newSelected;
+	});
+
+	let distanceMultiplier, speed;
+	const unsubscribeOrbit = orbit.subscribe(newOrbit => ([distanceMultiplier, speed] = newOrbit));
+
+	const calculateCurrentOrbit = (d, s, t) => {
+		const r = (((s * t) / d) % 360) * (Math.PI / 180);
+		return [d * Math.cos(r) || 0, d * Math.sin(r) || 0];
+	};
+
+	renderer.setAnimationLoop(() => {
+		const currentPlanets = Object.values(current);
+
+		if (currentPlanets.length < 1) return animate();
+		for (const [i, [hash, planet]] of Object.entries(current).entries()) {
+			const [x, z] = calculateCurrentOrbit(i * distanceMultiplier, speed, Date.now());
+			planet.position.setX(x);
+			planet.position.setZ(z);
+			if (selected == hash) {
+				controls.target.setX(x);
+				controls.target.setZ(z);
+			}
+		}
+
+		animate();
 	});
 
 	return [
 		() => {
 			unsubscribePlanets();
 			unsubscribeSelected();
+			unsubscribeOrbit();
 			renderer.dispose();
 		},
 		() => intersectedObject(object => object.userData.name === 'Planet')
