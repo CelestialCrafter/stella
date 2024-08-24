@@ -1,7 +1,7 @@
 <script>
 	export let dialog;
 
-	import { planets } from '../../stores';
+	import { planets, selectedPlanet } from '../../stores';
 	import { onMount } from 'svelte';
 
 	const features = {
@@ -34,6 +34,8 @@
 				copy[newPlanet.hash] = newPlanet;
 				return copy;
 			});
+
+			selectedPlanet.set(newPlanet.hash);
 		};
 	});
 </script>

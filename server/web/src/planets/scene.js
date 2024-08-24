@@ -43,6 +43,7 @@ export const initScene = canvas => {
 			}
 
 			const currentPlanets = Object.values(current);
+			if (currentPlanets.length < 1) return;
 			for (const [i, planet] of currentPlanets.entries()) {
 				planet.position.setX(30 * i);
 			}
