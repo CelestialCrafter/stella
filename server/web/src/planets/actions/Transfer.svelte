@@ -26,7 +26,9 @@
 				delete copy[planet];
 				return copy;
 			});
-			selectedPlanet.set(null);
+
+			let planetKeys = Object.keys($planets);
+			selectedPlanet.set(planetKeys[planetKeys.length - 1]);
 		};
 	});
 </script>
