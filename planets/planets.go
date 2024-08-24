@@ -37,6 +37,7 @@ type Planet struct {
 	Values    PlanetValues   `json:"values"`
 	Hash      string         `json:"hash"`
 	Directory string         `json:"directory"`
+	NickName  string         `json:"nickname"`
 }
 
 func frangeWrapper(r *rand.Rand) func(min float32, max float32) float32 {
