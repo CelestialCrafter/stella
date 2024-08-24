@@ -12,7 +12,6 @@
         packages = with pkgs; [
           go
           nodejs
-          git-lfs
           blender
         ];
       };
