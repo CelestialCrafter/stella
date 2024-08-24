@@ -19,6 +19,7 @@
 		Distance
 		<input
 			type="range"
+			value="30"
 			min="15"
 			max="100"
 			step="0.2"
@@ -30,6 +31,7 @@
 		Speed
 		<input
 			type="range"
+			value="1"
 			min="0.2"
 			max="10"
 			step="0.2"
