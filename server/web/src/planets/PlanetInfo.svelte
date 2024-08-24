@@ -13,7 +13,7 @@
 		{#if features.type === 'normal'}
 			<li><span>Rings</span>{features.normal_rings ? 'yes' : 'no'}</li>
 			<li><span>Size</span>{displayNumber(values.normal_size)}</li>
-			<li><span>Color</span><ColorCell value={values.normal_color} /></li>
+			<li><span>Surface</span>{values.normal_surface}</li>
 			{#if features.normal_rings}
 				<li><span>Rings</span>{values.normal_ring_amount}</li>
 				<li><span>Ring Size</span>{displayNumber(values.normal_ring_size)}</li>

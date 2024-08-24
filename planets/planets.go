@@ -24,6 +24,7 @@ type PlanetValues struct {
 	NormalRingColors   [][3]float32  `json:"normal_ring_colors"`
 	NormalRingRotation [][3]float32  `json:"normal_ring_rotation"`
 	NormalRingSize     float32       `json:"normal_ring_size"`
+	NormalSurface      int           `json:"normal_surface"`
 	BlackHoleSize      float32       `json:"blackhole_size"`
 	BlackHoleColors    [3][3]float32 `json:"blackhole_colors"`
 	StarBrightness     float32       `json:"star_brightness"`
@@ -65,7 +66,9 @@ func NewPlanet(features PlanetFeatures, newHash []byte) Planet {
 		},
 		NormalRingSize:   frange(1, 2),
 		NormalRingAmount: r.Intn(2) + 1,
-		BlackHoleSize:    frange(1, 10),
+		// make sure this equals or exceeds the amount of surfaces that exist
+		NormalSurface: r.Intn(500),
+		BlackHoleSize: frange(1, 10),
 		BlackHoleColors: [3][3]float32{
 			{frange(0, 255), frange(0, 255), frange(0, 255)},
 			{frange(0, 255), frange(0, 255), frange(0, 255)},

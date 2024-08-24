@@ -50,6 +50,16 @@ def apply_rings(amount, colors, rotations, size):
                                math.radians(rotation[2]))
 
 
+def apply_surface(num):
+    surfaces_dir = os.path.join(base_dir, 'surfaces/')
+    available = os.listdir(surfaces_dir)
+    surface = available[num % len(available) - 1]
+
+    planet = bpy.data.objects['Planet']
+    image = bpy.data.images.load(os.path.join(surfaces_dir, surface))
+    planet.active_material.node_tree.nodes['Image Texture'].image = image
+
+
 def apply_emission_strength(strength):
     material = get_selection().active_material
     nodes = material.node_tree.nodes
@@ -109,7 +119,7 @@ def generate_planet(planet):
     match features["type"]:
         case "normal":
             apply_size(values["normal_size"])
-            apply_color(values["normal_color"])
+            apply_surface(values["normal_surface"])
             if features["normal_rings"]:
                 apply_rings(values["normal_ring_amount"],
                             values["normal_ring_colors"],

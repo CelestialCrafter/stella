@@ -1,0 +1,2 @@
+blender/base.blend filter=lfs diff=lfs merge=lfs -text
+blender/surfaces/*.png filter=lfs diff=lfs merge=lfs -text
