@@ -27,10 +27,10 @@
 		</button>
 	</div>
 	<hr />
-	{#each Object.keys($planets) as hash}
+	{#each Object.values($planets) as { hash, features }}
 		<li class={$selectedPlanet === hash ? 'active' : ''}>
 			<a on:click={() => selectedPlanet.set(hash)} href={`#${hash}`}>
-				{hash}
+				{features['nickname'] || hash}
 			</a>
 		</li>
 	{/each}

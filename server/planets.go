@@ -44,8 +44,6 @@ func NewPlanet(c echo.Context) error {
 		defer lock.Unlock()
 	}
 
-	nickName := c.Param("nickname")
-
 	user, err := db.GetUser(id)
 	if err != nil {
 		return jsonError(c, http.StatusBadRequest, err)
@@ -69,7 +67,7 @@ func NewPlanet(c echo.Context) error {
 	}
 
 	// @FIX put create planet and update user into a tx
-	planet, err = db.CreatePlanet(planet.Hash, *features, id, nickName)
+	planet, err = db.CreatePlanet(planet.Hash, *features, id)
 	if err != nil {
 		return jsonError(c, http.StatusInternalServerError, err)
 	}

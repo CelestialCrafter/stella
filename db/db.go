@@ -50,7 +50,6 @@ func InitDB() {
 		hash TEXT PRIMARY KEY,
 		features TEXT NOT NULL,
 		owner_id TEXT NOT NULL,
-		nickname TEXT,
 		FOREIGN KEY (owner_id) REFERENCES users (user_id)
 	);`)
 	if err != nil {
@@ -116,14 +115,14 @@ func GetPlanets(owner string) ([]planets.Planet, error) {
 	return planets, nil
 }
 
-func CreatePlanet(hash string, features planets.PlanetFeatures, owner string, nickName string) (planets.Planet, error) {
+func CreatePlanet(hash string, features planets.PlanetFeatures, owner string) (planets.Planet, error) {
 	featuresBytes, err := json.Marshal(features)
 	if err != nil {
 		return planets.Planet{}, err
 	}
 
 	dbPlanet := dbPlanet{}
-	err = db.Get(&dbPlanet, "INSERT INTO planets (hash, features, owner_id, nickname) VALUES (?, ?, ?, ?) RETURNING *", hash, string(featuresBytes), owner, nickName)
+	err = db.Get(&dbPlanet, "INSERT INTO planets (hash, features, owner_id) VALUES (?, ?, ?) RETURNING *", hash, string(featuresBytes), owner)
 	if err != nil {
 		return planets.Planet{}, err
 	}

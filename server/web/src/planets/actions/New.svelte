@@ -8,7 +8,8 @@
 		type: 'normal',
 		normal_rings: false,
 		star_neutron: false,
-		blackhole_style: 'horizontal'
+		blackhole_style: 'horizontal',
+		nickname: ''
 	};
 
 	onMount(() => {
@@ -44,8 +45,12 @@
 	<form method="dialog">
 		<div>
 			<label>
+				Nickname
+				<input type="text" bind:value={features.nickname} />
+			</label>
+			<label>
 				Type
-				<select id="type" bind:value={features.type}>
+				<select bind:value={features.type}>
 					<option value="normal" selected>Normal</option>
 					<option value="star">Star</option>
 					<option value="blackhole">Black Hole</option>
@@ -55,17 +60,17 @@
 			{#if features.type === 'normal'}
 				<label>
 					Rings?
-					<input id="normal_rings" type="checkbox" bind:value={features.normal_rings} />
+					<input type="checkbox" bind:value={features.normal_rings} />
 				</label>
 			{:else if features.type === 'star'}
 				<label>
 					Neutron?
-					<input id="star_neutron" type="checkbox" bind:value={features.star_neutron} />
+					<input type="checkbox" bind:value={features.star_neutron} />
 				</label>
 			{:else}
 				<label>
 					Blackhole Style
-					<select id="blackhole_style" bind:value={features.blackhole_style}>
+					<select bind:value={features.blackhole_style}>
 						<option value="horizontal" selected>Horizontal</option>
 						<option value="vertical">Vertical</option>
 					</select>

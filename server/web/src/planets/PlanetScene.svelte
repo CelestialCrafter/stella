@@ -12,31 +12,22 @@
 	});
 
 	onDestroy(cleanup);
+
+	let orbitSpeed = 1;
+	let orbitDistance = 30;
+
+	$: orbit.set([orbitDistance, orbitSpeed]);
 </script>
 
 <div class="orbit">
 	<label>
 		Distance
-		<input
-			type="range"
-			value="30"
-			min="15"
-			max="100"
-			step="0.2"
-			on:change={e => orbit.update(prev => [Number(e.target.value), prev[1]])}
-		/>
+		<input type="range" min="15" max="100" step="0.2" bind:value={orbitDistance} />
 	</label>
 
 	<label>
 		Speed
-		<input
-			type="range"
-			value="1"
-			min="0.2"
-			max="10"
-			step="0.2"
-			on:change={e => orbit.update(prev => [prev[0], Number(e.target.value)])}
-		/>
+		<input type="range" min="0.2" max="10" step="0.2" bind:value={orbitSpeed} />
 	</label>
 </div>
 

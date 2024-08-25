@@ -12,6 +12,7 @@ import (
 
 type PlanetFeatures struct {
 	Type           string `json:"type" validate:"required"`
+	Nickname       string `json:"nickname"`
 	StarNeutron    bool   `json:"star_neutron"`
 	NormalRings    bool   `json:"normal_rings"`
 	BlackholeStyle string `json:"blackhole_style"`
@@ -37,7 +38,6 @@ type Planet struct {
 	Values    PlanetValues   `json:"values"`
 	Hash      string         `json:"hash"`
 	Directory string         `json:"directory"`
-	NickName  string         `json:"nickname"`
 }
 
 func frangeWrapper(r *rand.Rand) func(min float32, max float32) float32 {
