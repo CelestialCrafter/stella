@@ -20,7 +20,7 @@ export const initScene = async (canvas, state) => {
 	// @TODO replace azuki, it was the only one in my downloads folder
 	const spacing = 20;
 	const size = 10;
-	const font = await new FontLoader().loadAsync('public/azuki_font.json');
+	const font = await new FontLoader().loadAsync('/public/azuki_font.json');
 
 	const bounding = new THREE.Box3();
 	for (const [r, row] of state.board.entries())

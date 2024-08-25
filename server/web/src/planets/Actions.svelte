@@ -21,7 +21,7 @@
 	<button on:click={() => newDialog.showModal()}>New</button>
 	<button on:click={() => deleteDialog.showModal()} {disabled}>Delete</button>
 	<button on:click={() => transferDialog.showModal()} {disabled}>Transfer</button>
-	<button on:click={() => navigate(`/play/${$selectedPlanet}`)} {disabled}> Play </button>
+	<button on:click={() => navigate(`/app/play/${$selectedPlanet}`)} {disabled}> Play </button>
 </section>
 
 <style lang="scss">

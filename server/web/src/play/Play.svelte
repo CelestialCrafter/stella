@@ -18,15 +18,17 @@
 	};
 	document.onkeydown = e => ws.send(e.code);
 
-	let data = null;
 	let cleanup = () => {};
+	let scene = null;
+	let font = null;
+
 	const unsubscribe = state.subscribe(newState => {
 		switch (newState.type) {
 			case 'init':
-				tick().then(async () => ([cleanup, data] = await initScene(canvas, newState)));
+				tick().then(async () => ([cleanup, scene, font] = await initScene(canvas, newState)));
 				break;
 			case 'state':
-				if (data) updateScene(...data, newState);
+				if (scene && font) updateScene(scene, font, newState);
 				break;
 			default:
 		}
@@ -39,3 +41,13 @@
 </script>
 
 <canvas bind:this={canvas}></canvas>
+
+<style lang="scss">
+	@use '../styles/colors.scss';
+	@use '../styles/spacing.scss';
+
+	canvas {
+		width: 100% !important;
+		height: 99% !important;
+	}
+</style>
