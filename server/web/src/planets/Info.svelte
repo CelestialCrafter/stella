@@ -34,7 +34,7 @@
 				<li><span>Color</span><ColorCell value={values.star_neutron_color} /></li>
 			{/if}
 		{:else if features.type === 'blackhole'}
-			<li><span>Size</span>{values.normal_size}</li>
+			<li><span>Size</span>{displayNumber(values.normal_size)}</li>
 			<li><span>Blackhole Style</span>{features.blackhole_style}</li>
 			<li><span>Blackhole Color</span><ColorCell value={values.blackhole_colors[2]} /></li>
 			<li><span>Blackhole Ring Color 1</span><ColorCell value={values.blackhole_colors[0]} /></li>
