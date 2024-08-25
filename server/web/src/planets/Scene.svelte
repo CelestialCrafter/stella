@@ -22,12 +22,12 @@
 <div class="orbit">
 	<label>
 		Distance
-		<input type="range" min="15" max="100" step="0.2" bind:value={orbitDistance} />
+		<input type="range" min="30" max="100" step="0.2" bind:value={orbitDistance} />
 	</label>
 
 	<label>
 		Speed
-		<input type="range" min="0.2" max="10" step="0.2" bind:value={orbitSpeed} />
+		<input type="range" min="0" max="10" step="0.2" bind:value={orbitSpeed} />
 	</label>
 </div>
 

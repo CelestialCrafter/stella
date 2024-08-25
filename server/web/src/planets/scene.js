@@ -11,7 +11,7 @@ export const initScene = canvas => {
 	scene.add(light);
 
 	controls.autoRotate = true;
-	controls.maxDistance = controls.getDistance() * 2;
+	controls.maxDistance = controls.getDistance() * 3;
 	controls.minDistance = controls.getDistance() / 10;
 	controls.enablePan = false;
 	controls.update();
