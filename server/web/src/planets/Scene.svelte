@@ -1,7 +1,7 @@
 <script>
 	import { onDestroy, onMount } from 'svelte';
 	import { initScene } from './scene.js';
-	import { orbit, planets, selectedPlanet } from '../stores.js';
+	import { orbit, selectedPlanet } from '../stores.js';
 
 	let canvas;
 	let getSelectedPlanet = () => null;
@@ -32,12 +32,7 @@
 </div>
 
 <canvas
-	on:mousedown={() => {
-		const newSelected = getSelectedPlanet()?.name;
-		const planetHashes = Object.keys($planets);
-		if (!newSelected) return planetHashes.length > 0 ? selectedPlanet.set(planetHashes[0]) : null;
-		selectedPlanet.set(newSelected);
-	}}
+	on:mousedown={() => selectedPlanet.set(getSelectedPlanet()?.name || null)}
 	bind:this={canvas}
 ></canvas>
 
