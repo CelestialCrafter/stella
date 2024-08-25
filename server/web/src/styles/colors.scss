@@ -6,8 +6,8 @@ $floating: #1a1a1a;
 $disabled: #3e3e3e;
 $text: #eeeeee;
 
-$primary: hsl(267, 29, 71);
-$secondary: color.adjust($primary, $hue: 40%, $lightness: -40%);
-$accent: color.adjust($primary, $hue: 50%, $lightness: -20%);
+$primary: hsl(267, 29%, 71%);
+$secondary: color.adjust($primary, $hue: 40, $lightness: -40%);
+$accent: color.adjust($primary, $hue: 50, $lightness: -20%);
 
 $danger: color.change(color.adjust($primary, $saturation: 80%), $hue: 0);
