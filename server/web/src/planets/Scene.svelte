@@ -32,7 +32,11 @@
 </div>
 
 <canvas
-	on:mousedown={() => selectedPlanet.set(getSelectedPlanet()?.name || null)}
+	on:mousedown={() => {
+		const newSelected = getSelectedPlanet()?.name;
+		if (!newSelected) return;
+		selectedPlanet.set(newSelected);
+	}}
 	bind:this={canvas}
 ></canvas>
 

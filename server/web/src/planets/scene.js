@@ -4,14 +4,15 @@ import * as THREE from 'three';
 import { orbit, planets, selectedPlanet } from '../stores';
 
 export const initScene = canvas => {
-	const { controls, scene, camera, renderer, animate, intersectedObject } = baseInitScene(canvas);
+	const { controls, scene, camera, renderer, animate, intersectedObject, resize } =
+		baseInitScene(canvas);
 	camera.position.set(25, 25, 50);
 
 	const light = new THREE.AmbientLight(0x404040, 80);
 	scene.add(light);
 
 	controls.autoRotate = true;
-	controls.maxDistance = controls.getDistance() * 2;
+	controls.maxDistance = controls.getDistance();
 	controls.minDistance = controls.getDistance() / 10;
 	controls.enablePan = false;
 	controls.update();
@@ -43,9 +44,11 @@ export const initScene = canvas => {
 	});
 
 	let selected;
+	let doResize = false;
 	const unsubscribeSelected = selectedPlanet.subscribe(newSelected => {
 		if (!newSelected) return;
 		selected = newSelected;
+		doResize = true;
 	});
 
 	let distanceMultiplier, speed;
@@ -68,6 +71,11 @@ export const initScene = canvas => {
 				controls.target.setX(x);
 				controls.target.setZ(z);
 			}
+		}
+
+		if (doResize) {
+			resize();
+			doResize = false;
 		}
 
 		animate();
