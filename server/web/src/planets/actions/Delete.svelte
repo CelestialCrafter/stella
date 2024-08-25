@@ -40,11 +40,12 @@
 
 <style lang="scss">
 	@use '../../styles/colors.scss';
+	@use '../../styles/spacing.scss';
 
 	dialog {
 		max-width: 50%;
 		&[open] {
-			gap: 1rem;
+			gap: spacing.$padding;
 			display: flex;
 			flex-direction: column;
 		}

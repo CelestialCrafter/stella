@@ -19,16 +19,17 @@
 
 <style lang="scss">
 	@use '../styles/colors.scss';
+	@use '../styles/spacing.scss';
 
 	ul {
 		list-style: none;
-		border-radius: 1rem;
-		padding: 1rem;
+		border-radius: spacing.$radius;
+		padding: spacing.$padding;
 		background-color: colors.$floating;
 
 		li {
-			border-radius: 2rem;
-			padding: 0.5rem;
+			border-radius: calc(spacing.$radius * 2);
+			padding: calc(spacing.$padding / 2) spacing.$padding;
 		}
 	}
 

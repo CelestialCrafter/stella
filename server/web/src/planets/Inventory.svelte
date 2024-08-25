@@ -12,11 +12,13 @@
 
 <style lang="scss">
 	@use '../styles/colors.scss';
+	@use '../styles/spacing.scss';
+
 	main {
 		background-color: colors.$background;
 		display: grid;
-		padding: 1rem;
-		gap: 1rem;
+		padding: spacing.$padding;
+		gap: spacing.$padding;
 		grid-template-columns: 25rem 3fr;
 		grid-template-rows: 2fr 1fr;
 	}

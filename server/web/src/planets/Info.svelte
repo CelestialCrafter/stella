@@ -45,12 +45,13 @@
 
 <style lang="scss">
 	@use '../styles/colors.scss';
+	@use '../styles/spacing.scss';
 
 	ul {
 		grid-row: 2;
 		list-style: none;
-		border-radius: 1rem;
-		padding: 1rem;
+		border-radius: spacing.$radius;
+		padding: spacing.$padding;
 		background-color: colors.$floating;
 	}
 

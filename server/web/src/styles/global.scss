@@ -1,5 +1,6 @@
 @use './colors.scss';
 @use './timings.scss';
+@use './spacing.scss';
 
 @import url('https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,100..900;1,100..900&display=swap');
 
@@ -49,8 +50,8 @@ dialog {
   margin: auto;
   background-color: colors.$floating;
   border: none;
-  border-radius: 1rem;
-  padding: 1rem;
+  border-radius: spacing.$radius;
+  padding: spacing.$padding;
   transition: opacity timings.$slow allow-discrete;
 
   &[open] {
@@ -68,10 +69,9 @@ button,
 textarea {
   appearance: auto;
   accent-color: colors.$accent;
-  border: 0.1rem solid colors.$accent;
-  padding: 0.5rem 0.75rem;
-  margin: 0.1rem;
-  border-radius: 2rem;
+  border: spacing.$border solid colors.$accent;
+  padding: calc(spacing.$padding / 2) spacing.$padding;
+  border-radius: calc(spacing.$radius * 2);
   vertical-align: middle;
 }
 

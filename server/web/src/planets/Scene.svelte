@@ -38,19 +38,21 @@
 
 <style lang="scss">
 	@use '../styles/colors.scss';
+	@use '../styles/spacing.scss';
+
 	.orbit {
 		position: absolute;
 		z-index: 10;
-		right: 1rem;
+		right: spacing.$padding;
 		background-color: colors.$floating;
-		padding: 1rem;
-		border-radius: 1rem;
+		padding: spacing.$padding;
+		border-radius: spacing.$radius;
 	}
 
 	canvas {
 		grid-row: 1/3;
 		width: 100% !important;
 		height: 100% !important;
-		border-radius: 1rem;
+		border-radius: spacing.$radius;
 	}
 </style>

@@ -26,9 +26,15 @@
 
 <style lang="scss">
 	@use '../styles/colors.scss';
+	@use '../styles/spacing.scss';
 
 	section {
 		text-align: center;
+		gap: calc(spacing.$padding / 2);
+		display: grid;
+		justify-content: center;
+		grid-template-columns: repeat(auto-fill, 40%);
+
 		button {
 			border-color: colors.$primary;
 		}
