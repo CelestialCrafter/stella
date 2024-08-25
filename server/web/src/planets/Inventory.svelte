@@ -1,17 +1,17 @@
 <script>
-	import PlanetInfo from './PlanetInfo.svelte';
-	import PlanetScene from './PlanetScene.svelte';
-	import PlanetList from './PlanetList.svelte';
+	import Info from './Info.svelte';
+	import Scene from './Scene.svelte';
+	import List from './List.svelte';
 </script>
 
 <main>
-	<PlanetList />
-	<PlanetScene />
-	<PlanetInfo />
+	<List />
+	<Scene />
+	<Info />
 </main>
 
 <style lang="scss">
-	@use '../colors.scss';
+	@use '../styles/colors.scss';
 	main {
 		background-color: colors.$background;
 		display: grid;

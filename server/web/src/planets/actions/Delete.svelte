@@ -32,14 +32,14 @@
 
 <dialog bind:this={dialog}>
 	<h2>Are you sure you want to delete {$selectedPlanet}?</h2>
-	<form method="dialog">
+	<form method="dialog" class="triggers">
 		<button value="confirm">Delete</button>
 		<button value="cancel">Cancel</button>
 	</form>
 </dialog>
 
 <style lang="scss">
-	@use '../../colors.scss';
+	@use '../../styles/colors.scss';
 
 	dialog {
 		max-width: 50%;
@@ -48,6 +48,10 @@
 			display: flex;
 			flex-direction: column;
 		}
+	}
+
+	.triggers button {
+		border-color: colors.$primary;
 	}
 
 	h2 {

@@ -41,7 +41,7 @@
 			voided
 		</span>
 	</div>
-	<form method="dialog">
+	<form method="dialog" class="triggers">
 		<input type="text" bind:value={destination} placeholder="New Owner ID..." required />
 		<button value="confirm">Transfer</button>
 		<button value="cancel" formnovalidate>Cancel</button>
@@ -49,7 +49,7 @@
 </dialog>
 
 <style lang="scss">
-	@use '../../colors.scss';
+	@use '../../styles/colors.scss';
 
 	dialog {
 		max-width: 50%;
@@ -65,5 +65,9 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		color: colors.$danger;
+	}
+
+	.triggers button {
+		border-color: colors.$primary;
 	}
 </style>

@@ -1,4 +1,6 @@
 @use './colors.scss';
+@use './timings.scss';
+
 @import url('https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,100..900;1,100..900&display=swap');
 
 * {
@@ -7,12 +9,15 @@
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  font-variation-settings:
-    "wdth" 100;
+  font-variation-settings: "wdth" 100;
+
+  &::selection {
+    background-color: colors.$accent;
+  }
 }
 
 button {
-  transition: border-color 0.15s;
+  transition: border-color timings.$normal;
 
   &:disabled {
     border-color: colors.$disabled;
@@ -46,11 +51,10 @@ dialog {
   border: none;
   border-radius: 1rem;
   padding: 1rem;
-
-  transition: all 0.7s allow-discrete;
+  transition: opacity timings.$slow allow-discrete;
 
   &[open] {
-    animation: open 0.25s forwards;
+    animation: open timings.$normal forwards;
   }
 }
 
@@ -60,11 +64,23 @@ label {
 
 select,
 input,
-button {
+button,
+textarea {
   appearance: auto;
+  accent-color: colors.$accent;
   border: 0.1rem solid colors.$accent;
   padding: 0.5rem 0.75rem;
   margin: 0.1rem;
   border-radius: 2rem;
   vertical-align: middle;
+}
+
+textarea,
+input {
+  outline: none;
+  transition: timings.$normal border-color;
+
+  &:focus {
+    border-color: colors.$secondary;
+  }
 }

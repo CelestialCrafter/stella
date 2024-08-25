@@ -78,7 +78,7 @@
 			{/if}
 		</div>
 
-		<div>
+		<div class="triggers">
 			<button value="confirm">Create</button>
 			<button value="cancel" formnovalidate>Cancel</button>
 		</div>
@@ -86,6 +86,7 @@
 </dialog>
 
 <style lang="scss">
+	@use '../../styles/colors.scss';
 	dialog {
 		max-width: 50%;
 	}
@@ -94,5 +95,9 @@
 		gap: 1rem;
 		display: flex;
 		flex-direction: column;
+	}
+
+	.triggers button {
+		border-color: colors.$primary;
 	}
 </style>

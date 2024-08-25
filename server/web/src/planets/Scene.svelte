@@ -37,7 +37,7 @@
 ></canvas>
 
 <style lang="scss">
-	@use '../colors.scss';
+	@use '../styles/colors.scss';
 	.orbit {
 		position: absolute;
 		z-index: 10;
