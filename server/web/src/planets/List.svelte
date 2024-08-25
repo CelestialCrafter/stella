@@ -26,6 +26,7 @@
 		border-radius: spacing.$radius;
 		padding: spacing.$padding;
 		background-color: colors.$floating;
+		overflow: scroll;
 
 		li {
 			border-radius: calc(spacing.$radius * 2);
