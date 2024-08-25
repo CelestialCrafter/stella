@@ -10,8 +10,6 @@ space & planet app!
 
 - models are huge (62mb max)
 
-- models directory is revealed when fetching a planet
-
 - transfering a planet to a non-extent user basically voids the planet
 
 - api returns "x not found" error when the error is actually "you do not own x"
