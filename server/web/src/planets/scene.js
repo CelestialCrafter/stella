@@ -7,7 +7,7 @@ export const initScene = canvas => {
 	const { controls, scene, camera, renderer, animate, intersectedObject } = baseInitScene(canvas);
 	camera.position.set(25, 25, 50);
 
-	const light = new THREE.AmbientLight(0x404040, 80);
+	const light = new THREE.AmbientLight(0x404040, 50);
 	scene.add(light);
 
 	controls.autoRotate = true;

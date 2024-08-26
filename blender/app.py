@@ -132,9 +132,9 @@ def generate_planet(planet):
                             values["normal_ring_size"])
         case "star":
             apply_size(values["star_size"])
-            apply_emission_strength(values["star_brightness"])
+            apply_emission_strength(3.2)
             if features["star_neutron"]:
-                apply_emission_color(values["star_neutron_color"])
+                apply_emission_color([140, 255, 255])
                 apply_neutron_rod()
         case "blackhole":
             apply_color(values["normal_color"])

@@ -21,7 +21,7 @@ export const initScene = canvas => {
 		renderer.render(scene, camera);
 	};
 
-	new THREE.TextureLoader().loadAsync('/public/skybox.jpg').then(texture => {
+	new THREE.TextureLoader().loadAsync('/public/skybox.png').then(texture => {
 		texture.mapping = THREE.EquirectangularReflectionMapping;
 		texture.colorSpace = THREE.SRGBColorSpace;
 		scene.background = texture;
