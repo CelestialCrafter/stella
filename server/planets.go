@@ -8,6 +8,7 @@ import (
 	"path"
 	"sync"
 
+	"github.com/CelestialCrafter/stella/common"
 	"github.com/CelestialCrafter/stella/db"
 	"github.com/CelestialCrafter/stella/planets"
 	"github.com/golang-jwt/jwt/v5"
@@ -82,6 +83,8 @@ func NewPlanet(c echo.Context) error {
 			return jsonError(c, http.StatusInternalServerError, err)
 		}
 	}
+
+	common.GenrateSound(planet.Hash, uint8(planet.Values.NormalColor[0]), uint8(planet.Values.NormalColor[1]))
 
 	return c.JSON(http.StatusOK, planet)
 }

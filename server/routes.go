@@ -34,6 +34,12 @@ func svelte(e *echo.Echo) {
 func setupRoutes(e *echo.Echo) {
 	svelte(e)
 
+	s := e.Group("/sounds")
+	s.Use(middleware.GzipWithConfig(middleware.GzipConfig{
+		Level: 6,
+	}))
+	s.Static("/", "sounds")
+
 	m := e.Group("/models")
 	m.Use(middleware.GzipWithConfig(middleware.GzipConfig{
 		Level: 6,
