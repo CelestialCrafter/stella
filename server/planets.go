@@ -85,15 +85,15 @@ func NewPlanet(c echo.Context) error {
 	}
 	
 	if planet.Features.Type == "normal" {
-		err = common.GenerateSound(planet.Hash, uint8(planet.Values.NormalSize), uint8(planet.Values.NormalColor[1]))
+		err = common.GenerateSound(planet.Hash, uint8(planet.Values.NormalSize), uint8(planet.Values.NormalColor[0]))
 	} else if planet.Features.Type == "star" {
 		if planet.Features.StarNeutron {
-			err = common.GenerateSound(planet.Hash, uint8(planet.Values.StarSize), uint8(planet.Values.StarNeutronColor[1]))
+			err = common.GenerateSound(planet.Hash, uint8(planet.Values.StarSize), uint8(planet.Values.StarNeutronColor[2]))
 		} else {
 			err = common.GenerateSound(planet.Hash, uint8(planet.Values.StarSize), uint8(planet.Values.StarBrightness))
 		}
 	} else if planet.Features.Type == "blackhole" {
-		err = common.GenerateSound(planet.Hash, uint8(planet.Values.BlackHoleSize), uint8(planet.Values.BlackHoleColors[2][1]))
+		err = common.GenerateSound(planet.Hash, uint8(planet.Values.BlackHoleSize), uint8(planet.Values.BlackHoleColors[0][0]))
 	}
 
 	if err != nil {
