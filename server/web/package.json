@@ -16,7 +16,7 @@
     "eslint-plugin-svelte": "^2.43.0",
     "prettier-plugin-svelte": "^3.2.6",
     "sass": "^1.77.8",
-    "svelte": "^4.2.12",
+    "svelte": "^4.2.19",
     "vite": "^5.2.0"
   },
   "dependencies": {
