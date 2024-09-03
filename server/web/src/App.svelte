@@ -3,7 +3,6 @@
 	import * as jose from 'jose';
 
 	import ApiKey from './ApiKey.svelte';
-	import Play from './play/Play.svelte';
 	import Inventory from './planets/Inventory.svelte';
 
 	import { planets, selectedPlanet } from './stores';
@@ -56,6 +55,5 @@
 			{tick().then(() => navigate('/app/inventory'))}
 		</Route>
 		<Route path="/inventory" component={Inventory} />
-		<Route path="/play/:id" component={Play} let:params />
 	{/if}
 </Router>

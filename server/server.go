@@ -2,6 +2,7 @@ package server
 
 import (
 	"os"
+	"time"
 	// "time"
 
 	"github.com/charmbracelet/log"
@@ -44,6 +45,11 @@ func SetupServer() {
 		LogErrorFunc: logPanicRecover,
 	}))
 	e.Use(middleware.CORS())
+	e.Use(middleware.TimeoutWithConfig(middleware.TimeoutConfig{
+		Skipper:      middleware.DefaultSkipper,
+		ErrorMessage: "response timed out",
+		Timeout:      30 * time.Second,
+	}))
 
 	setupRoutes(e)
 

@@ -3,7 +3,6 @@ module github.com/CelestialCrafter/stella
 go 1.22.6
 
 require (
-	github.com/CelestialCrafter/games v0.0.0-20240818221240-a51f01f8f703
 	github.com/charmbracelet/bubbletea v0.27.0
 	github.com/charmbracelet/log v0.4.0
 	github.com/coder/websocket v1.8.12
