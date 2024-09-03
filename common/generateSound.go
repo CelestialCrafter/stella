@@ -61,15 +61,15 @@ func writeWAVFile(filename string, samples []int16) error {
 	return nil
 }
 
-func GenrateSound(planetHash string, r uint8, g uint8) {
+func GenerateSound(planetHash string, r uint8, g uint8) error {
 	frequency, amplitude := rgbToWave(r, g)
 	samples := generateSineWave(frequency, amplitude)
 
 	filename := fmt.Sprintf("sounds/%s.wav", planetHash)
 	err := writeWAVFile(filename, samples)
 	if err != nil {
-		fmt.Println("Error writing WAV file:", err)
-		return
+		return err
 	}
-
+	
+	return nil
 }

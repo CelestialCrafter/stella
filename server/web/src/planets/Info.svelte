@@ -1,6 +1,7 @@
 <script>
 	import { planets, selectedPlanet } from '../stores';
 	import ColorCell from '../ColorCell.svelte';
+	import Tone from './Tone.svelte';
 
 	const displayNumber = num => num.toFixed(2);
 </script>
@@ -8,6 +9,9 @@
 {#if $selectedPlanet}
 	{@const { features, values } = $planets[$selectedPlanet]}
 	<ul>
+		<Tone hash={$selectedPlanet} />
+		<hr>
+
 		<li><span>Type</span>{features.type}</li>
 
 		{#if features.type === 'normal'}

@@ -83,16 +83,21 @@ func NewPlanet(c echo.Context) error {
 			return jsonError(c, http.StatusInternalServerError, err)
 		}
 	}
+	
 	if planet.Features.Type == "normal" {
-		common.GenrateSound(planet.Hash, uint8(planet.Values.NormalSize), uint8(planet.Values.NormalColor[1]))
+		err = common.GenerateSound(planet.Hash, uint8(planet.Values.NormalSize), uint8(planet.Values.NormalColor[1]))
 	} else if planet.Features.Type == "star" {
 		if planet.Features.StarNeutron {
-			common.GenrateSound(planet.Hash, uint8(planet.Values.StarSize), uint8(planet.Values.StarNeutronColor[1]))
+			err = common.GenerateSound(planet.Hash, uint8(planet.Values.StarSize), uint8(planet.Values.StarNeutronColor[1]))
 		} else {
-			common.GenrateSound(planet.Hash, uint8(planet.Values.StarSize), uint8(planet.Values.StarBrightness))
+			err = common.GenerateSound(planet.Hash, uint8(planet.Values.StarSize), uint8(planet.Values.StarBrightness))
 		}
 	} else if planet.Features.Type == "blackhole" {
-		common.GenrateSound(planet.Hash, uint8(planet.Values.BlackHoleSize), uint8(planet.Values.BlackHoleColors[2][1]))
+		err = common.GenerateSound(planet.Hash, uint8(planet.Values.BlackHoleSize), uint8(planet.Values.BlackHoleColors[2][1]))
+	}
+
+	if err != nil {
+		return jsonError(c, http.StatusInternalServerError, err)
 	}
 
 	return c.JSON(http.StatusOK, planet)

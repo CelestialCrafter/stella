@@ -20,6 +20,6 @@
 		padding: spacing.$padding;
 		gap: spacing.$padding;
 		grid-template-columns: 25rem 3fr;
-		grid-template-rows: 2fr 1fr;
+		grid-template-rows: 2fr;
 	}
 </style>
