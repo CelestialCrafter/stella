@@ -1,5 +1,7 @@
 # stella
 
+**this project is complete.**
+
 space & planet app!
 
 ## known issues:
