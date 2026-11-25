@@ -2,6 +2,9 @@
 
 **this project is complete.**
 
+> [!WARNING]
+> this repository has moved to [tangled](https://tangled.org/celestial.moe/stella)!
+
 space & planet app!
 
 ## known issues:
